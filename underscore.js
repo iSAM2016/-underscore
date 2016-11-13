@@ -40,27 +40,25 @@
   // of the passed-in callback, to be repeatedly applied in other Underscore
   // functions.
   var optimizeCb = function(func, context, argCount) {
-     //func === iteratee
-     //context === context
+     //func === iteratee      迭代器
+     //context === context    上下文
      //argcount
 
-     //function(obj, iteratee, context) 
+     //function(obj, iteratee, context)
+
+     /**
+      *  绑定context 主要是改变迭代器的绑定
+      */
 
     if (context === void 0) return func;
-    switch (argCount == null ? 3 : argCount) {
-      case 1: return function(value) {
-        return func.call(context, value);
-      };
-      case 2: return function(value, other) {
-        return func.call(context, value, other);
-      };
-      case 3: return function(value, index, collection) {
-        return func.call(context, value, index, collection);
-      };
-      case 4: return function(accumulator, value, index, collection) {
-        return func.call(context, accumulator, value, index, collection);
-      };
-    }
+
+      /**
+      *  why have collection
+      */
+
+     return function( value,index ){
+          return func.call( context, value, index, )
+     }
     return function() {
       return func.apply(context, arguments);
     };

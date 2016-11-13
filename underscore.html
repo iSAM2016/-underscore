@@ -11,10 +11,27 @@
 </body>
 </html>
 <script>
-var obj={}
-  _.each({a:1,name: 2,},function(ele,index){
-    console.log(ele)
-  } );
+  var obj = {};  
+   var m = function(){}
+_.each([1, 2, 3], function (i) { 
+  console.log(this.name + ":" + i); 
+}, obj); 
 
+/*//  伪造数组方法
+ var  eles = {
+    length: 0,
+    add: function(elem){
+        Array.prototype.push.call(this,elem)
+
+    },
+    get: function(id){
+        this.add(document.getElementById(id))
+    },
+    k: 0
+ }
+
+ eles.get( "id" )*/
+
+ alert(_.isObject(null))
 
 </script>

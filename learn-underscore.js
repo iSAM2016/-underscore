@@ -83,6 +83,11 @@
           return  typeof length === "number" && length >=0 && length  <= MAX_ARRAY_INDEX;   
       }
 
+      /**
+      *  绑定context 主要是改变迭代器的绑定,
+      *  
+      *  在Es5 之前，window 下的undifined 是可以被重写的，于是导致了一定的差错  
+      */
     var optimizeCb = function(func, context, argCount) {
         if (context === void 0) return func;
         switch (argCount == null ? 3 : argCount) {
@@ -127,6 +132,7 @@ _.each = _.forEach = function(obj, iteratee, context){
      }
      return obj
 }
+
 /*遍历list中的所有元素，按顺序用遍历输出每个元素。
         如果传递了context参数，则把iteratee绑定到context对象上。每次
     调用iteratee都会传递三个参数：(element, index, list)。
@@ -137,5 +143,25 @@ _.each = _.forEach = function(obj, iteratee, context){
     Underscore就使用它代替。）
 */
 
+/**
+* to determine object
+*                1   typeof
+*                2   instanceof  dott well, because instnaceof dott distinguish
+*                    between array and object . licks
+*
+*                    fn : return (obj instanceof  Object)
+*                    eg1: fn({}) // true
+*                    eg2: fn([]) // true
+*
+*                3   Object.prototype.toString.call( obj )
+*                       this ways is better
+*
+*/
+
+_.isObject = function(obj){
+    var type = typeof obj
+    console.log(type)
+      return type === "function" || type=== "object" && !!obj 
+}
 
 }.call(this))
