@@ -49,15 +49,26 @@
 (function(){
 //基本配置
     var  root = this;
+    
+    var
+        nativeKeys         = Object.keys;
+
+    // Save bytes in the minified (but not gzipped) version:
+    var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
+    
+    var
+         hasOwnProperty   = ObjProto.hasOwnProperty;
 /**
 * 没有研究套 
 */
      var _ = function(obj) {
-    console.log('root')
-    if (obj instanceof _) return obj;
-    if (!(this instanceof _)) return new _(obj);
-    this._wrapped = obj;
-  };
+        console.log('root')
+        if (obj instanceof _) return obj;
+        if (!(this instanceof _)) return new _(obj);
+        this._wrapped = obj;
+    };
+
+
 /**
 * --没有研究套 
 */
@@ -72,6 +83,9 @@
 
         root._ = _
     }
+
+
+
 
     var getLength = function(collection){
      return collection.length
@@ -109,29 +123,29 @@
     };
   };
 
-//集合函数 (数组 或对象)
-_.each = _.forEach = function(obj, iteratee, context){
-      iteratee = optimizeCb(iteratee, context);
-     if(isArrayLike(obj)){
-        for(i = 0, length = obj.length; i < length; i++){
+    //集合函数 (数组 或对象)
+    _.each = _.forEach = function(obj, iteratee, context){
+          iteratee = optimizeCb(iteratee, context);
+         if(isArrayLike(obj)){
+            for(i = 0, length = obj.length; i < length; i++){
 
-            iteratee(obj[i],i, obj)
-        }
-     }else{
-       
-        /**
-        * Object.keys，该方法返回对象属性一个数组
-        */
-      
-        var keys = Object.keys(obj)
-        console.log(keys)
-        for (i = 0, length = keys.length; i < length; i++) {
-        iteratee(obj[keys[i]], keys[i], obj);
-      }
+                iteratee(obj[i],i, obj)
+            }
+         }else{
+           
+            /**
+            * Object.keys，该方法返回对象属性一个数组
+            */
+          
+            var keys = Object.keys(obj)
+            console.log(keys)
+            for (i = 0, length = keys.length; i < length; i++) {
+            iteratee(obj[keys[i]], keys[i], obj);
+          }
 
-     }
-     return obj
-}
+         }
+         return obj
+    }
 
 /*遍历list中的所有元素，按顺序用遍历输出每个元素。
         如果传递了context参数，则把iteratee绑定到context对象上。每次
@@ -158,10 +172,62 @@ _.each = _.forEach = function(obj, iteratee, context){
 *
 */
 
-_.isObject = function(obj){
-    var type = typeof obj
-    console.log(type)
-      return type === "function" || type=== "object" && !!obj 
-}
+    _.isObject = function(obj){
+        var type = typeof obj
+        console.log(type)
+          return type === "function" || type=== "object" && !!obj 
+    }
+
+    // Shortcut function for checking if an object has a given property directly
+    // on itself (in other words, not on a prototype).
+    _.has = function(obj, key) {
+        return obj != null && hasOwnProperty.call(obj, key);
+    };
+ 
+
+ /*
+    *for-in
+    *遍历可枚举的属性
+    *有浏览器的兼容问题 IE< 9
+    * IE < 9 下不能用 for in 来枚举的 key 值集合
+            var nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString',
+                    'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
+    *                
+    * propertyIsEnumerable是检测属性是否可用 for...in 枚举                
+    *
+    */
+     var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');
+     var nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString',
+                      'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
+
+
+    function collectNonEnumProps(obj, keys) {
+    var nonEnumIdx = nonEnumerableProps.length;
+    var constructor = obj.constructor;
+    var proto = (_.isFunction(constructor) && constructor.prototype) || ObjProto;
+
+    // Constructor is a special case.
+    var prop = 'constructor';
+    if (_.has(obj, prop) && !_.contains(keys, prop)) keys.push(prop);
+
+    while (nonEnumIdx--) {
+      prop = nonEnumerableProps[nonEnumIdx];
+      if (prop in obj && obj[prop] !== proto[prop] && !_.contains(keys, prop)) {
+        keys.push(prop);
+      }
+    }
+  }
+//https://github.com/hanzichi/underscore-analysis/issues/3
+
+_.keys = function(obj) {
+    if (!_.isObject(obj)) return [];
+    if (nativeKeys) return nativeKeys(obj);
+    var keys = [];
+    for (var key in obj) if (_.has(obj, key)) keys.push(key);
+    // Ahem, IE < 9.
+    if (hasEnumBug) collectNonEnumProps(obj, keys);
+    return keys;
+  };
+
 
 }.call(this))
