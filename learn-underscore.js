@@ -126,6 +126,7 @@
     //集合函数 (数组 或对象)
     _.each = _.forEach = function(obj, iteratee, context){
           iteratee = optimizeCb(iteratee, context);
+          var i,length;
          if(isArrayLike(obj)){
             for(i = 0, length = obj.length; i < length; i++){
 
@@ -137,8 +138,8 @@
             * Object.keys，该方法返回对象属性一个数组
             */
           
-            var keys = Object.keys(obj)
-            console.log(keys)
+            var keys =  _.keys(obj)
+          
             for (i = 0, length = keys.length; i < length; i++) {
             iteratee(obj[keys[i]], keys[i], obj);
           }
@@ -197,37 +198,66 @@
     *
     */
      var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');
+     //IE < 9 cntt use (for in)
      var nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString',
                       'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
 
 
-    function collectNonEnumProps(obj, keys) {
-    var nonEnumIdx = nonEnumerableProps.length;
-    var constructor = obj.constructor;
-    var proto = (_.isFunction(constructor) && constructor.prototype) || ObjProto;
+   /* Unsuited   use because IE < 9 "toString"  have problem
+    _.isFunction = function(obj){
+      
+      return Object.prototype.toString( obj ).toLowerCase() === "[object function]"
+    }*/
 
-    // Constructor is a special case.
-    var prop = 'constructor';
-    if (_.has(obj, prop) && !_.contains(keys, prop)) keys.push(prop);
-
-    while (nonEnumIdx--) {
-      prop = nonEnumerableProps[nonEnumIdx];
-      if (prop in obj && obj[prop] !== proto[prop] && !_.contains(keys, prop)) {
-        keys.push(prop);
+    if(typeof /./ != 'function' && typeof Int8Array != 'object'){
+       _.isFunction = function(obj){
+        return typeof obj === "function"  || false
       }
     }
-  }
+
+    _.contains = _.includes = _.include = function(obj, item, fromIndex, guard){
+        if (!isArrayLike(obj))  obj = _.values(obj);
+        /**
+        * note
+        */
+        if (typeof fromIndex != 'number' || guard) fromIndex = 0;
+        return _.indexOf(obj, item, fromIndex) >= 0;
+    }
+
+    function collectNonEnumProps(obj, keys) {
+      console.log(12100)
+      var nonEnumIdx = nonEnumerableProps.length;
+      var constructor = obj.constructor;
+      var proto = (_.isFunction(constructor) && constructor.prototype) || ObjProto;
+                                                //window (obj)            // Object (obj)
+      // Constructor is a special case.
+      var prop = 'constructor';
+      if (_.has(obj, prop) && !_.contains(keys, prop)) keys.push(prop);
+
+      while (nonEnumIdx--) {
+        prop = nonEnumerableProps[nonEnumIdx];
+        if (prop in obj && obj[prop] !== proto[prop] && !_.contains(keys, prop)) {
+          keys.push(prop);
+        }
+      }
+    }
 //https://github.com/hanzichi/underscore-analysis/issues/3
 
-_.keys = function(obj) {
-    if (!_.isObject(obj)) return [];
-    if (nativeKeys) return nativeKeys(obj);
-    var keys = [];
-    for (var key in obj) if (_.has(obj, key)) keys.push(key);
-    // Ahem, IE < 9.
-    if (hasEnumBug) collectNonEnumProps(obj, keys);
-    return keys;
-  };
+
+    _.keys = function(obj) {
+      console.log(!_.isObject(obj)+ "boool")
+        if (!_.isObject(obj)) return [];
+        console.log(nativeKeys +"nativeKeys")
+        if (nativeKeys) return nativeKeys(obj);
+        var keys = [];
+
+        for (var key in obj) if (_.has(obj, key)) keys.push(key);
+        // Ahem, IE < 9.
+console.log(211212)
+console.log(keys)
+        if (hasEnumBug) collectNonEnumProps(obj, keys);
+        return keys;
+      };
 
 
 }.call(this))

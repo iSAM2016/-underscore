@@ -11,11 +11,10 @@
 </body>
 </html>
 <script>
-  var obj = {};  
-   var m = function(){}
-_.each([1, 2, 3], function (i) { 
-  console.log(this.name + ":" + i); 
-}, obj); 
+ 
+_.each({name1:1, name2:2, name3:3}, function (i) { 
+
+}); 
 
 /*//  伪造数组方法
  var  eles = {
@@ -31,13 +30,17 @@ _.each([1, 2, 3], function (i) {
  }
 
  eles.get( "id" )*/
-function k(){
+  function Employee(name,job,born)
+      {
+      this.name=name;
+      this.job=job;
+      this.born=born;
+      }
 
-var l = constructor.prototype
-console.log( l)
-console.log(constructor.prototype === window.constructor.prototype)
-}
+      var bill=new Employee("Bill Gates","Engineer",1985);
 
-k()
+var obj={}
 
+        console.log(obj.__proto__ === Object.prototype)  //true
+        console.log(Object instanceof Object ) //true
 </script>

@@ -2,9 +2,10 @@
 learn underscore
 
 isuess 
-    1、_.isFunction(constructor) ？？？ 
+   
+    2 if(typeof /./ != 'function' && typeof Int8Array != 'object'){
 
-
+#######
 
 //IIFE 将window穿入进去
 //JS中(function(){xxx})()
@@ -43,34 +44,68 @@ isuess
                         (function(a){
                             console.log(a);   //firebug输出1234，使用（）运算符
                         }(1234));
-
+#######原型
 
 Object 在理解
 1高程（p148）
-无论什么时候只要创建一个新函数，就会根据一组特定的规则为该函数创建一个prototype属性，
-这个属性指向函数的原型对象。
-在默认情况下，所有的原型对象都会自动获取一个constructor属性，这个属性包含指向protorype属性所在函数的指针。
+无论什么时候只要创建一个新函数，就会根据一组特定的规则为该函数创建一个prototype（属性值是个对象）
+属性，这个属性指向函数的原型对象。
+
+在默认情况下，所有的原型对象都会自动获取一个constructor属性，这个属性包含指向protorype
+属性所在函数的指针。
 
 
-理解:
-1、只有函数对象有prototype属性
-2、任何对象都有构造函数constructor
-3、prototype不是函数
-4、obj 的构造函数是obj.constructor（本质是函数）
-5、函数的prototype属性只有该函数作为构造器构造一个对象时才有意义，他所指向的对象保存了构造出来的新对象所继承的属性
-6、一切函数对象的构造函数都是 Function
-7、当一个函数被声明时，这个函数的prototype属性的constructor属性值是这个函数的自身
-8、第7点理解不了就算了，但事实就是这样，你可以验证一下
+
+/**
+* 原型和原型链 
+* 参考王福朋博客
+* http://www.cnblogs.com/wangfupeng1988/tag/%E5%8E%9F%E5%9E%8B/
+*/
+一： 略
+二： 函数和对象的关系
+    
+    函数是对象的一种，对象都是函数创建的。eg:
+
+      function Employee(name,job,born)
+      {
+      this.name=name;
+      this.job=job;
+      this.born=born;
+      }
+
+      var bill=new Employee("Bill Gates","Engineer",1985);
+
+三：prototype 原型
+  原型和函数的关系已经在开篇已经交代了
+
+四：__proto__ 隐式原型
+    每个对象都有一个隐式的属性，但是有些浏览器是不会让你发现的  
+
+    文字版：  每个对象都有一个__proto__属性，指向创建该对象的函数的prototype。
+
+    eg: bill.__proto__ === Employee.protitype  //true
+
+    eg: var obj={}
+
+        obj.__proto__ === Object.prototype  //true
+        Object.prototype.__proto__ === null //true
+
+    最终的__proto__ 都要指向 Object.prototype（考虑Object.prototype.__proto__）
+
+    函数是特殊的对象，他当然也是有__proto__
+    Object.__proto__ === Functon.prototype
+
+五： instanceof 运算
+      Instanceof运算符的第一个变量是一个对象，暂时称为A；第二个变量一般是一个函数，暂时称为B。
+      运算规则：沿着A的__proto__ 这条线来找，同时沿着B 的prototype 这条线来找，如果两条线能同
+                时找到同一个对象，那么就返回true，如果找到终点还没有找到，则返回false
+                console.log(Object instanceof Function) //true
+                console.log(Function instanceof Object) //true
+                console.log(Function instanceof Function) //true
+                console.log(Object instanceof Object) //true
 
 
-function employee(name,job,born)
-{
-this.name=name;
-this.job=job;
-this.born=born;
-}
 
-var bill=new employee("Bill Gates","Engineer",1985);
 
 
 bill.prototype        //undifined
@@ -118,3 +153,31 @@ new形式创建对象的过程实际上可以分为三步：
         ObjProto              ==> object(obj)
 
         没有发现_.isFunction(constructor)
+
+
+
+
+
+const addtocart = productId => (a,b) =>{
+  console.log()
+}
+
+======》
+
+function addtocart(product){
+  return function(a,b){
+      console.log(a)
+  }
+} 
+
+
+
+getAddedIds( state )
+    .reduce((total,id) =>{
+
+      return total + getProduct(state, id).price * getQuantity(state, id)
+      },0)
+    
+    .toFixed(2)
+
+  没有写 {} 的时候就有return
