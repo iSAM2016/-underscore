@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
-    <!-- <script src="underscore.js"></script> -->
-     <script src="learn-underscore.js"></script>  
+    <!--  <script src="underscore.js"></script> -->
+   <script src="learn-underscore.js"></script>   
 </head>
 <body>
     
@@ -12,11 +12,14 @@
 </html>
 <script>
  
+/*each
 _.each({name1:1, name2:2, name3:3}, function (i) { 
 
-}); 
+}); */
 
-/*//  伪造数组方法
+
+
+/*  伪造数组方法
  var  eles = {
     length: 0,
     add: function(elem){
@@ -30,17 +33,25 @@ _.each({name1:1, name2:2, name3:3}, function (i) {
  }
 
  eles.get( "id" )*/
-  function Employee(name,job,born)
-      {
-      this.name=name;
-      this.job=job;
-      this.born=born;
-      }
 
-      var bill=new Employee("Bill Gates","Engineer",1985);
 
-var obj={}
+/* map
+var obj = {base: 2}
+var arr =_.map([1, 2], function(num,key){ 
+  return   num * 3  });
+console.log(arr)*/
 
-        console.log(obj.__proto__ === Object.prototype)  //true
-        console.log(Object instanceof Object ) //true
+
+
+
+   
+var listOfPlays =  {
+    year: 1918, newsroom: "The New York Times",
+    reason: "For its public service in publishing in full so many official reports",
+  }   
+
+
+var arr= _.findWhere(listOfPlays, {newsroom: "The New York Times"})
+console.log(arr)
+
 </script>

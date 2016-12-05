@@ -4,6 +4,13 @@ learn underscore
 isuess 
    
     2 if(typeof /./ != 'function' && typeof Int8Array != 'object'){
+    3 collectNonEnumProps 函数
+    4_.keys = function(obj) {
+        if (!_.isObject(obj
+
+    5    optimizeCb 中argu
+
+    6  (!undefinedOnly || obj[key] === void 0) 
 
 #######
 
@@ -103,8 +110,29 @@ Object 在理解
                 console.log(Function instanceof Object) //true
                 console.log(Function instanceof Function) //true
                 console.log(Object instanceof Object) //true
+  
+    instanceof表示的就是一种继承关系，或者原型链的结构。
 
+六： 继承
+     javescript中的继承是通过原型链来体现的：
+     访问一个对象的属性时，先在基本属性中查找，如果没有，再沿着__proto__这条链向上找，这就是原型链。
 
+     由于所有的对象的原型链都会找到Object.prototype，因此所有的对象都会有Object.prototype的方法。这就是所谓的“继承”。
+
+七：原型的灵活性
+        可以灵活的添加属性、
+
+八：  简述执行上下文（上）
+
+      我们总结一下，在“准备工作”中完成了哪些工作：
+
+      变量、函数表达式——变量声明，默认赋值为undefined；
+      this——赋值；
+      函数声明——赋值；
+      这三种数据的准备情况我们称之为“执行上下文”或者“执行上下文环境”。
+
+九： 执行上下文（下）               
+      函数每调用一次，都会产生一个新的上下文环境因为不同的调用可能产生不同的参数
 
 
 
