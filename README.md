@@ -1,4 +1,4 @@
-# -underscore
+# underscore
 learn underscore
 
 isuess 
@@ -83,8 +83,7 @@ Object 在理解
       var bill=new Employee("Bill Gates","Engineer",1985);
 
 三：prototype 原型
-  原型和函数的关系已经在开篇已经交代了
-
+  原型和函数的关系已经在开篇已经交代了.每个函数都有prototype,每个对象(函数也是对象)都有__proto__
 四：__proto__ 隐式原型
     每个对象都有一个隐式的属性，但是有些浏览器是不会让你发现的  
 
@@ -101,7 +100,7 @@ Object 在理解
 
     函数是特殊的对象，他当然也是有__proto__
     Object.__proto__ === Functon.prototype
-
+    函数是有Function函数来创建的,所以函数的__proto__ 指向的是Function 函数的prototype而 Function的prototye 是一个对象，他的__proto__ 指向的是Object 函数的protype.而Object.prototype.__proto__ 是个特例是null 固定的
 五： instanceof 运算
       Instanceof运算符的第一个变量是一个对象，暂时称为A；第二个变量一般是一个函数，暂时称为B。
       运算规则：沿着A的__proto__ 这条线来找，同时沿着B 的prototype 这条线来找，如果两条线能同
