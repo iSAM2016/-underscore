@@ -1,4 +1,4 @@
-# -underscore
+# underscore
 learn underscore
 
 isuess 
@@ -83,8 +83,7 @@ Object 在理解
       var bill=new Employee("Bill Gates","Engineer",1985);
 
 三：prototype 原型
-  原型和函数的关系已经在开篇已经交代了
-
+  原型和函数的关系已经在开篇已经交代了.每个函数都有prototype,每个对象(函数也是对象)都有__proto__
 四：__proto__ 隐式原型
     每个对象都有一个隐式的属性，但是有些浏览器是不会让你发现的  
 
@@ -97,10 +96,11 @@ Object 在理解
         obj.__proto__ === Object.prototype  //true
         Object.prototype.__proto__ === null //true
 
-    最终的__proto__ 都要指向 Object.prototype（考虑Object.prototype.__proto__）
+    最终的__proto__ 都要指向 Object.prototype（考虑Object.prototype.__proto__,而Object.prototype.__proto__ 是个特例是null 固定的）
 
     函数是特殊的对象，他当然也是有__proto__
     Object.__proto__ === Functon.prototype
+    函数是有Function函数来创建的,所以函数的__proto__ 指向的是Function 函数的prototype而,Function的prototye 是一个对象，他的__proto__ 指向的是Object 函数的protype.
 
 五： instanceof 运算
       Instanceof运算符的第一个变量是一个对象，暂时称为A；第二个变量一般是一个函数，暂时称为B。
@@ -148,7 +148,7 @@ var obj={}
 obj.constructor       //function Object() { [native code] }   
 
 错误的理解Object是个纯对象!!!
-    比如 obj = {} 和 Object 是一个级别的对象，Object还是个函数.
+    举一个错误的例子，比如 obj = {} 和 Object 是一个级别的对象，Object应该是个函数.
     MDN 中描述到Object：
         对象构造函数为给定值创建一个对象包装器。如果给定值是  null or undefined，将会创建并返回一个空对象，否则，将返回一个与给定值对应类型的对象。
         当以非构造函数形式被调用时，Object 等同于 new Object()。
@@ -159,53 +159,40 @@ obj.constructor       //function Object() { [native code] }
         所以Object 更加详细的描述就是function  
 
 
-扩展
-new形式创建对象的过程实际上可以分为三步：
+十：扩展
+  new形式创建对象的过程实际上可以分为三步：
 
-第一步是建立一个新对象（叫A吧）；
+  第一步是建立一个新对象（叫A吧）；
 
-第二步将该对象（A）内置的原型对象设置为构造函数(就是Person)prototype 属性引用的那个原型对象；
+  第二步将该对象（A）内置的原型对象设置为构造函数(就是Person)prototype 属性引用的那个原型对象；
 
-第三步就是将该对象（A）作为this 参数调用构造函数(就是Person)，完成成员设置等初始化工作。      
-
-
-在function collectNonEnumProps(obj, keys) {
-    var nonEnumIdx = nonEnumerableProps.length;
-    var constructor = obj.constructor;
-    var proto = (_.isFunction(constructor) && constructor.prototype) || ObjProto;
-    ...
-  }中(_.isFunction(constructor) && constructor.prototype) || ObjProto ？？？
-
-   这是访问实例原型的一种方法：
-        constructor.prototype ==> window(obj)
-        ObjProto              ==> object(obj)
-
-        没有发现_.isFunction(constructor)
+  第三步就是将该对象（A）作为this 参数调用构造函数(就是Person)，完成成员设置等初始化工作。      
 
 
+  在function collectNonEnumProps(obj, keys) {
+      var nonEnumIdx = nonEnumerableProps.length;
+      var constructor = obj.constructor;
+      var proto = (_.isFunction(constructor) && constructor.prototype) || ObjProto;
+      ...
+    }中(_.isFunction(constructor) && constructor.prototype) || ObjProto ？？？
 
+     这是访问实例原型的一种方法：
+          constructor.prototype ==> window(obj)
+          ObjProto              ==> object(obj)
 
+          没有发现_.isFunction(constructor)
 
-const addtocart = productId => (a,b) =>{
-  console.log()
-}
+十一：
+function Personal(){};
+var p = new Personal();
+①从p 画出 完成的__proto__链
+  p-> Personal.prototype-> Object.prototype->null
 
-======》
+②Personal() 的原型链
+Personal()-> Function.prototype->Object.prototype->null
 
-function addtocart(product){
-  return function(a,b){
-      console.log(a)
-  }
-} 
+③console.log(Personal.constructor)
+分析： Personal.__proto__ 指向的是Function.prototype.函数是没有constructor 属性的，所以会沿着__proto__ 向上一级寻找，是Function.prototype，他的constructor 是function Function(){}
 
+④console.log(Personal.prototype)
 
-
-getAddedIds( state )
-    .reduce((total,id) =>{
-
-      return total + getProduct(state, id).price * getQuantity(state, id)
-      },0)
-    
-    .toFixed(2)
-
-  没有写 {} 的时候就有return

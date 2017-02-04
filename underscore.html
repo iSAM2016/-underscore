@@ -4,18 +4,30 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <!--  <script src="underscore.js"></script> -->
-   <script src="learn-underscore.js"></script>   
+   <!-- <script src="learn-underscore.js"></script> -->   
+   <script src="m.js"></script>   
 </head>
 <body>
     
 </body>
 </html>
 <script>
- 
-/*each
-_.each({name1:1, name2:2, name3:3}, function (i) { 
+  function isObject(obj) {
+    var type = typeof obj;
+    console.log(type)
+    return type === 'function' || type === 'object' && !!obj;
+  };
+console.log(isObject(1))
 
-}); */
+function a(){
+  console.log(arguments)
+  _.each(arguments, function (i,index) { 
+    console.log(i)
+  }); 
+ }
+/*_.each(a, function(i,index,collection) { 
+  console.log(index)
+},window)*/
 
 
 
