@@ -35,23 +35,11 @@ _.each({name1:1, name2:2, name3:3}, function (i) {
  eles.get( "id" )*/
 
 
-/* map
-var obj = {base: 2}
-var arr =_.map([1, 2], function(num,key){ 
-  return   num * 3  });
-console.log(arr)*/
+//contains_.contains(list, value, [fromIndex]) Alias: includes
+//如果list包含指定的value则返回true（愚人码头注：使用===检测）。如果list 是数组，内部使用indexOf判断。使用fromIndex来给定开始检索的索引位置。
 
-
-
+_.contains([1, 2, 3], 3);
 
    
-var listOfPlays =  {
-    year: 1918, newsroom: "The New York Times",
-    reason: "For its public service in publishing in full so many official reports",
-  }   
-
-
-var arr= _.findWhere(listOfPlays, {newsroom: "The New York Times"})
-console.log(arr)
 
 </script>

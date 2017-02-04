@@ -229,6 +229,7 @@
         /**
         * note
         */
+       
         if (typeof fromIndex != 'number' || guard) fromIndex = 0;
         return _.indexOf(obj, item, fromIndex) >= 0;
     }
@@ -251,7 +252,9 @@
     }
     //https://github.com/hanzichi/underscore-analysis/issues/3
 
+     _.indexOf = createIndexFinder(1, _.findIndex, _.sortedIndex);
 
+     
     _.keys = function(obj) {
         if (!_.isObject(obj)) return [];
         if (nativeKeys) return nativeKeys(obj);
@@ -485,6 +488,38 @@
   _.reject = function(obj, predicate, context) {
     return _.filter(obj, _.negate(cb(predicate)), context);
   };
+
+  //every_.every(list, [predicate], [context]) Alias: all
+//如果list中的所有元素都通过predicate的真值检测就返回true。（愚人码头注：如果存在原生的every方法，就使用原生的every。）
+
+  _.every =_.all = function(obj, predicate, context){
+    predicate = cb(predicate,context)
+     var keys = !isArrayLike(obj) && _.keys(obj),
+     length = ( keys || obj ).length;
+
+     for(var i  = 0; i < length; i++){
+        var currentkey = keys ?  keys[i]: i;
+        if( !predicate( obj[currentkey], currentkey, obj )) return false 
+     }
+
+   return true
+     
+  }
+
+
+  // Determine if at least one element in the object matches a truth test.
+  // Aliased as `any`.
+  _.some = _.any = function(obj, predicate, context) {
+    predicate = cb(predicate, context);
+    var keys = !isArrayLike(obj) && _.keys(obj),
+        length = (keys || obj).length;
+    for (var index = 0; index < length; index++) {
+      var currentKey = keys ? keys[index] : index;
+      if (predicate(obj[currentKey], currentKey, obj)) return true;
+    }
+    return false;
+  };
+
 
 
 }.call(this))
