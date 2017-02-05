@@ -86,7 +86,28 @@
                  return func.call(context,value,index,collection)
             }
         }
-    }   
+    }
+
+    //复制对象 在extend extendowen 复制对象
+    //undefinedOnly  不清楚
+    var createAssigner = function(keysFunc, unde){
+        return function(obj){
+            var length = argument.length;
+            //当只有一个参数或者没有参数的时候
+            if(length < 2 || obj == null) return obj;
+            for (var index = 1; index < length; index){
+                var source = argument[index],
+                    keys = keysFunc(source),
+                    l = keys.length;
+
+                 for(var l = 0; i < l; i++){
+                    var key = keys[i];
+                    if(!undefinedOnly || obj[key] === void 0 ) obj[key] = source[key]; 
+                 }   
+            }
+            return obj;
+        };
+    }; 
 
     _.each = _.forEach = function(obj, iteratee, context){
         iteratee = optimizeCb(iteratee,context);
@@ -108,7 +129,7 @@
         if(!_.isObject(obj)) return [];
         if(nativeKeys) return nativeKeys(obj);
         var keys = [];
-        for(var key in obj) if(_.has(obj,key)) keys.push(key)
+        for (var key in obj) if(_.has(obj,key)) keys.push(key)
         if(hasEnumBug) collectNonEnumProps(obj,keys);
         return keys;
     }
@@ -154,5 +175,7 @@
             return _.isMatch(obj, attrs);
         };
     };
+
+
 
 }.call(this))
