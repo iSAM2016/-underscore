@@ -3,21 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
-    <!--  <script src="underscore.js"></script> -->
+     <script src="underscore.js"></script> 
    <!-- <script src="learn-underscore.js"></script> -->   
-   <script src="m.js"></script>   
+   <!-- <script src="m.js"></script>    -->
 </head>
 <body>
     
 </body>
 </html>
 <script>
-  function isObject(obj) {
-    var type = typeof obj;
-    console.log(type)
-    return type === 'function' || type === 'object' && !!obj;
-  };
-console.log(isObject(1))
 
 function a(){
   console.log(arguments)
@@ -46,12 +40,13 @@ function a(){
 
  eles.get( "id" )*/
 
+var ready = _.matcher({selected: true, visible: true});
+//var readyToGoList = _.filter(list, ready);
+console.log(ready)
 
-/* map
-var obj = {base: 2}
-var arr =_.map([1, 2], function(num,key){ 
-  return   num * 3  });
-console.log(arr)*/
+var arr =_.map({one: 1, two: 2, three: 3} );
+console.log(arr)
+
 
 
 
