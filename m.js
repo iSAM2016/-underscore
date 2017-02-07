@@ -88,6 +88,13 @@
         }
     }
 
+    var cd = function(value, context, argCount){
+        if(value == null) return value
+        if(_.isFunction(value))  return optimizeCb(value, context, argCount);
+        /*不理解*/if(_.isObject(value)) return _.matcher(value);
+            return _.property(value)
+    }
+
     //复制对象 在extend extendowen 复制对象
     //undefinedOnly  不清楚
     var createAssigner = function(keysFunc, unde){
@@ -108,6 +115,20 @@
             return obj;
         };
     }; 
+    //findIndex findLastIndex
+    //正反顺序遍历
+    function createPredicateIndexFinder(dir){
+        //dir 判断是findIndex  还是findlastIndex
+        return function(array, predicate, context){
+            predicate = cd(predicate, context);
+            var length = getLength(array);
+            var index = dir > 0 ?  0 : length - 1;
+            for(; index >= 0 && index < length; index += dir){
+                if(predicate(array[index], index, array)) return 1;
+            }
+            return -1;
+        }
+    }
 
     _.each = _.forEach = function(obj, iteratee, context){
         iteratee = optimizeCb(iteratee,context);
@@ -133,6 +154,16 @@
         if(hasEnumBug) collectNonEnumProps(obj,keys);
         return keys;
     }
+      // Retrieve all the property names of an object.
+    _.allKeys = function(obj) {
+        if (!_.isObject(obj)) return [];
+        var keys = [];
+        for (var key in obj) keys.push(key);
+        // Ahem, IE < 9.
+        if (hasEnumBug) collectNonEnumProps(obj, keys);
+        return keys;
+    };
+
     //javascript 函数和object都是对象,其中null 也是object 要注意使用!!object 来判断
     _.isObject = function(obj){
         var type = typeof obj;
@@ -148,16 +179,9 @@
         return typeof obj === 'function' || false;
     }
 
-    var cd = function(value, context, argCount){
-        if(value == null) return value
-        if(_.isFunction(value))  return optimizeCb(value, context, argCount);
-        /*不理解*/if(_.isObject(value)) return _.matcher(value);
-            return _.property(value)
-    }
 
     _.map = _.collect = function(obj, iteratee, context){
         iteratee = cd(iteratee, context);
-        console.log(iteratee)
         var keys = !isArrayLike(obj) &&  _.keys(obj),
             length = (keys || obj).length;
             result = Array(length)
@@ -167,7 +191,9 @@
              };
              return result;
     };
-
+    _.extend = createAssigner(_.allKeys);
+    
+    _.extendOwn = _.assign = createAssigner(_.keys)
     //检查对象是否具有给定的关键字：值对。
     /*不理解*/_.matcher = function(attrs){
         attrs = _.extendOwn({},attrs);
@@ -176,6 +202,27 @@
         };
     };
 
+    _.findIndex = createPredicateIndexFinder(1);
+    _.findLastIndex = createPredicateIndexFinder(-1);
+
+    //find 
+    _.find = _.detect = function(obj, predicate, context){
+        var key;
+        if(isArrayLike(obj)){
+            key =  _.findIndex(obj, predicate, context);
+        }else{
+
+        }
+        if(key !== void 0 && key !== -1) return obj[key];
+    }
+    _.findKey = function(obj, predicate, context){
+        predicate = cb(predicate, context);
+        var keys = _.keys(obj),key;
+        for(var i = 0;  length = keys.length; i < length;){
+             key = keys[i];
+            if(predicate(obj[key], key, obj)) return key;
+        }
+    }
 
 
 }.call(this))
