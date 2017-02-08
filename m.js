@@ -209,19 +209,56 @@
     _.find = _.detect = function(obj, predicate, context){
         var key;
         if(isArrayLike(obj)){
+            //数组寻找
             key =  _.findIndex(obj, predicate, context);
         }else{
-
+            // 对象寻找
+            key = _.findKey(obj, predicate, context )
         }
         if(key !== void 0 && key !== -1) return obj[key];
     }
+
     _.findKey = function(obj, predicate, context){
         predicate = cb(predicate, context);
         var keys = _.keys(obj),key;
-        for(var i = 0;  length = keys.length; i < length;){
+        for(var i = 0;  length = keys.length; i < length){
              key = keys[i];
             if(predicate(obj[key], key, obj)) return key;
         }
+    }
+    //过滤符合条件的值
+    _.filter = _.select = function(obj, predicate, context){
+        var results = [];
+        predicate = cb(predicate,context);
+        _.each(obj, function(varlue, index, list){
+            if(predicate(value, index, list)) results.push(value)
+        });
+        return results;
+    }
+
+    //检查properties中的键和值是否包含在object中
+    _.isMatch = function(obj, attrs){
+        var keys = _.keys(attrs), length = keys.length;
+        if(obj === null) return !length;
+        /*不明白*/
+        var obj = Object(obj);
+         for (var i = 0; i < length; i++) {
+             var key = keys[i];
+             if(attrs[key] !== obj[key] || !(key in obj)) return false
+        }
+        return true;
+    }
+
+    //全部通过测试返回true
+    _.every = _.all = function(obj, predicate, context){
+        predicate = cd(predicate, context);
+        var keys = !isArrayLike(obj) && _.keys(obj),
+            length = (keys || obj).length;
+        for(var index = 0; index < length; index++){
+            var currentKey = keys ? keys[index] : index;
+            if(!predicate(obj[currentKey], currentKey, obj)) return false;
+        }
+        return true;
     }
 
 
