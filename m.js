@@ -60,6 +60,11 @@
             return obj == null ? void 0 : obj[key];
         }
     }
+    var property = function(keys){
+        return function(obj){
+            reutrn  obj === null ? void 0 :  obj[keys]; 
+        }
+    }
 
     _.property = property;
 
@@ -185,6 +190,7 @@
         var keys = !isArrayLike(obj) &&  _.keys(obj),
             length = (keys || obj).length;
             result = Array(length)
+
              for (var index = 0; index < length; index++) {
                 var currentKey  = keys ? keys[index] : index 
                 result[index] = iteratee(obj[currentKey])
@@ -260,6 +266,48 @@
         }
         return true;
     }
+
+    function createIndexFinder(dir, predicateFind, sortedIndex) {
+        return function(array, item, idx) {
+          var i = 0, length = getLength(array);
+          if (typeof idx == 'number') {
+            if (dir > 0) {
+                i = idx >= 0 ? idx : Math.max(idx + length, i);
+            } else {
+                length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;
+            }
+          } else if (sortedIndex && idx && length) {
+            idx = sortedIndex(array, item);
+            return array[idx] === item ? idx : -1;
+          }
+          if (item !== item) {
+            idx = predicateFind(slice.call(array, i, length), _.isNaN);
+            return idx >= 0 ? idx + i : -1;
+          }
+          for (idx = dir > 0 ? i : length - 1; idx >= 0 && idx < length; idx += dir) {
+            if (array[idx] === item) return idx;
+          }
+          return -1;
+        };
+    }
+
+    // Return the position of the first occurrence of an item in an array,
+    // or -1 if the item is not included in the array.
+    // If the array is large and already in sort order, pass `true`
+    // for **isSorted** to use binary search.
+     _.indexOf = createIndexFinder(1, _.findIndex, _.sortedIndex);
+     _.lastIndexOf = createIndexFinder(-1, _.findLastIndex);
+
+    //如果list中包含指定的value 
+    _.contains = function(obj, item, fromINdex){
+        if(!isArrayLike(obj)) obj = _.values(obj);
+        if(typeof fromIndex != 'number' || guard) fromIndex = 0;
+        return _.indexOf(obj, item, fromINdex) >= 0;
+    }
+    //返回指定属性的返回值
+    _.pluck = function(obj, key) {
+        return _.map(obj, _.property(key));
+    };
 
 
 }.call(this))
