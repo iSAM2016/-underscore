@@ -12,17 +12,9 @@
 </body>
 </html>
 <script>
-
-function a(){
-  console.log(arguments)
-  _.each(arguments, function (i,index) { 
-    console.log(i)
-  }); 
- }
 /*_.each(a, function(i,index,collection) { 
   console.log(index)
 },window)*/
-
 
 
 /*  伪造数组方法
@@ -30,7 +22,6 @@ function a(){
     length: 0,
     add: function(elem){
         Array.prototype.push.call(this,elem)
-
     },
     get: function(id){
         this.add(document.getElementById(id))
@@ -43,11 +34,18 @@ function a(){
 /*var arr =_.map({one: 1, two: 2, three: 3},function(i){
   console.log(i)
 });*/
-var even = _.find([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
 
-var k =_.every([2, 1, 3, 4], function(i){
+
+/*var even = _.find([1, 2, 3, 4, 5, 6], function(num){ return num % 2 == 0; });
+*/
+
+/*var k =_.every([2, 1, 3, 4], function(i){
   return i > 1;
-});
-console.log(k)
+});*/
 
+/*
+*/
+console.log(_.some([0, -1,2], function(i){
+  return i > 1;
+}))
 </script>

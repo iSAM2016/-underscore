@@ -261,5 +261,34 @@
         return true;
     }
 
+    //如果有一个通过测试就可以
+    _.some = _.any = function(obj, predicate, contenxt){
+        predicate = cd(predicate, contenxt);
+        //!true 是数组 false
+        //!false 是对象
+        //输出是key 值
+        var keys = !isArrayLike(obj) && _.keys(obj),
+            length = (keys  || obj).length;
+        for(var index = 0; index < length; index++){
+            currentKey = keys ?  keys[index] : index;
+
+            if(predicate(obj[currentKey], index, obj)) return true;
+        }
+        return false;
+
+    }
+
+    //返回对象的所有属性
+    _.values = function(obj){
+        var keys = _.key(obj);
+        var length  = keys.length;
+        var values = Array(length);
+        for(var i = 0; i < length; i++ ){
+            values = keys[i];
+        }
+        return values
+
+    }
+
 
 }.call(this))
