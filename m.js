@@ -2,7 +2,7 @@
     //issure 
     // 1 collectNonEnumProps
     //2 如果没有理解会标记/ *不理解*/
-
+    //3  isArrayLike 和  _.isArray
 
     var root = this;
     var nativeKeys = Object.keys;
@@ -55,14 +55,10 @@
         }
     }
     /*不理解*/
-    var property = function(key){
-        return function (obj){
-            return obj == null ? void 0 : obj[key];
-        }
-    }
+    //通过属性key取得该对象的value
     var property = function(keys){
         return function(obj){
-            reutrn  obj === null ? void 0 :  obj[keys]; 
+            return  obj === null ? void 0 :  obj[keys]; 
         }
     }
 
@@ -97,6 +93,7 @@
         if(value == null) return value
         if(_.isFunction(value))  return optimizeCb(value, context, argCount);
         /*不理解*/if(_.isObject(value)) return _.matcher(value);
+        //如果不是函数和对象就是字符串，返回一个判断属性的返回函数
             return _.property(value)
     }
 
@@ -267,6 +264,35 @@
         return true;
     }
 
+
+    //如果有一个通过测试就可以
+    _.some = _.any = function(obj, predicate, contenxt){
+        predicate = cd(predicate, contenxt);
+        //!true 是数组 false
+        //!false 是对象
+        //输出是key 值
+        var keys = !isArrayLike(obj) && _.keys(obj),
+            length = (keys  || obj).length;
+        for(var index = 0; index < length; index++){
+            currentKey = keys ?  keys[index] : index;
+
+            if(predicate(obj[currentKey], index, obj)) return true;
+        }
+        return false;
+
+    }
+
+    //返回对象的所有属性
+    _.values = function(obj){
+        var keys = _.keys(obj);
+        var length  = keys.length;
+        var values = Array(length);
+        for(var i = 0; i < length; i++ ){
+            values[i] = obj[keys[i]];
+        }
+        return values
+    }
+
     function createIndexFinder(dir, predicateFind, sortedIndex) {
         return function(array, item, idx) {
           var i = 0, length = getLength(array);
@@ -309,5 +335,51 @@
         return _.map(obj, _.property(key));
     };
 
+    //group by operations
+    var group = function(behavior) {
+        return function(obj, iteratee, context) {
+            var result = {};
+            iteratee = cd(iteratee, context);
+            //functon(obj){ return obj === null ? void:0 : obj[key]}
+            console.log(iteratee)
+            _.each(obj, function(value,index){
+                var key = iteratee(value, index, obj);
+                behavior(result, value, key);
+            })
+            return result;
+        };
+    };
+
+    //把一个集合分为对个集合，通过iterator返回的结果进行分组，如果itera是一个字符串
+    //而不是函数，那么作为元素的属性名来进行分组
+    _.groupBy = group(function(result, value, key){
+        //false result没有key的属性,开始创建
+        if(_.has(result, key))  result[key].push(value); else result[key] = [value];
+    });
+    //排序一个列表组成一个组，并且返回各组中的对象的数量的计数。类似groupBy，
+    //但是不是返回列表的值，而是返回在该组中值的数目。
+    _.countBy_ = group(function(result, value, key){
+        //false result没有key的属性,开始创建
+        if(_.has(result, key))  result[key].push(value); else result[key] = [value];
+    });
+
+    _.shuffle = function(obj){
+        var set = isArrayLike(obj) ? obj : _.values(obj);
+        var length = set.length;
+        var shuffle = [];
+        for(var i = length ; i > 0; i--){
+            shuffle.push(set.splice(_.random(1, i)-1, 1)[0])
+        }
+        return shuffle;
+    }
+
+    //生成连个数之间的随机值
+     _.random = function(min, max){
+        if(max === null){
+            max = min;
+            min = 0
+        }
+        return min + Math.floor(Math.random() * (max - min + 1))
+     }
 
 }.call(this))
