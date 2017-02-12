@@ -1,8 +1,4 @@
 (function(){
-    //issure 
-    // 1 collectNonEnumProps
-    //2 如果没有理解会标记/ *不理解*/
-    //3  isArrayLike 和  _.isArray
 
     var root = this;
     var nativeKeys = Object.keys;
@@ -22,6 +18,9 @@
         slice            = ArrayProto.slice,
         toString         = ObjProto.toString,
         hasOwnProperty   = ObjProto.hasOwnProperty;
+
+    var 
+        nativeIsArray    = Array.isArray
     /**
     * 导出函数  node.js requier()  普通调用
     */
@@ -131,7 +130,7 @@
             return -1;
         }
     }
-
+    //遍历list中的所有元素，按顺序用遍历输出每个元素
     _.each = _.forEach = function(obj, iteratee, context){
         iteratee = optimizeCb(iteratee,context);
         var i ,length;
@@ -181,7 +180,7 @@
         return typeof obj === 'function' || false;
     }
 
-
+    //通过转换函数(迭代器)映射列表中的每个值产生价值的新数组
     _.map = _.collect = function(obj, iteratee, context){
         iteratee = cd(iteratee, context);
         var keys = !isArrayLike(obj) &&  _.keys(obj),
@@ -374,12 +373,29 @@
     }
 
     //生成连个数之间的随机值
-     _.random = function(min, max){
+    _.random = function(min, max){
         if(max === null){
             max = min;
             min = 0
         }
         return min + Math.floor(Math.random() * (max - min + 1))
      }
+    //size返回List的长度
+    _.size = function(obj, predicate,content) {
+        if (obj === null) return 0;
+        return isArrayLike(obj) ? obj.length : _.keys(obj).length;
+     }
 
+    //判断集合是否为函数，有原生的Es5判断方法
+    _.isArray = nativeIsArray || function(obj) {
+        return toString.call(obj) === '[object Array]';
+    }
+
+    //把list(任何可以迭代的对象)转换成一个数组，在转换 arguments 对象时非常有用。
+    _.toArray = function(obj) {
+        if (!obj) return [];
+        if (_.isArray(obj)) return obj;
+        if (isArrayLike(obj)) return _.keys(obj);
+        return  _.values(obj);
+    }
 }.call(this))

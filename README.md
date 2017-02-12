@@ -1,7 +1,27 @@
-# underscore
->参考[亚里士朱德的博客](http://yalishizhude.github.io/2015/09/22/underscore-source/)
+# underscore 源码学习
+>参考[亚里士朱德的博](http://yalishizhude.github.io/2015/09/22/underscore-source/)
+>参考[源码解析](https://yoyoyohamapi.gitbooks.io/undersercore-analysis/content/base/%E7%BB%93%E6%9E%84.html)
 
-###问题
+##目录
+*   [问题](#preblem)
+*   [作用域包裹](#closure)
+*   [绑定](#bindroot)
+*   [undefined](#undefined)
+*   [原型](#prototype)
+    *   [原型赋值](#assignment)
+    *   [Object 在理解](#understanding)
+*   [判断数据](#isElement)
+
+
+<h2 id="bindroot">绑定</h2>
+underscore对象`_`会覆盖全局对象上同名的 `_`属性，underscore会保留之前就存在的`_` 
+  
+    var previousUnderscore = root._;
+
+---
+<h2 id="preblem">问题</h2>
+>如果没有理解会标记*不理解* 
+
 1. 测试
 2. if(typeof /./ != 'function' && typeof Int8Array != 'object'){
 3. collectNonEnumProps 函数
@@ -11,21 +31,35 @@
 5. optimizeCb 中argu
 
 6. (!undefinedOnly || obj[key] === void 0) 
+7. toArray ==> isArrayLike + isArray
+8.   isArrayLike 和  _.isArray
+9.   集合分为类数组集合和对象集合
 
 ---
 
-###闭包
+<h2 id="undefined">undefined</h2>
+ 在js中undefined是不靠谱的，他能被赋值，如果要获取到正宗的undefined使用void 0
+ 在一些框架中这样使用
+
+    (function(window,undefined) {
+    // ...
+    })(window)
+
+  将其他没有用的参数赋值给undefined,防止破坏函数内部逻辑
+  
+---
+<h2 id="closure">作用域包裹</h2>
 
 * IIFE 将window穿入进去
-* JS中(function(){xxx})()
+* JS中(function(){xxx})() *立即执行函数*
 
 * 包围函数（function(){})的第一对括号向脚本返回未命名的函数，随后一对空括号立即执行返回的未命名函数，括号内为匿名函数的参数。
- 其他写法
-  * (function () {  code  } ()); 
-  * !function () {  code  } ();
-  * ~function () {  code  } ();
-  * -function () {  code  } ();
-  * +function () {  code  } ();
+其他写法:
+    * (function () {  code  } ()); 
+    * !function () {  code  } ();
+    * ~function () {  code  } ();
+    * -function () {  code  } ();
+    * +function () {  code  } ();
   * 函数声明：  function name(){}
   * 函数表达式：var fnname = function(){}
   * 匿名函数：  function(){} 匿名函数属于函数表达式
@@ -34,31 +68,31 @@
           1. 变量提升
           2.  函数表达式可以在后面添加扩看，但是命名函数不行吧
           
-                      function fnName(){
-                            alert('Hello World');
-                        }();//error
+                  function fnName(){
+                        alert('Hello World');
+                    }();//error
 
-                        function(){
-                            console.log('Hello World');    
-                        }();//error  没有赋值
+                    function(){
+                        console.log('Hello World');    
+                    }();//error  没有赋值
 
-                        而（）、！、+、-、=等运算符，都将函数声明转换成函数表达式，
-                        消除了javascript引擎识别函数表达式和函数声明的歧义，告诉
-                        javascript引擎这是一个函数表达式，不是函数声明，可以在后面
-                        加括号，并立即执行函数的代码。
+                    而（）、！、+、-、=等运算符，都将函数声明转换成函数表达式，
+                    消除了javascript引擎识别函数表达式和函数声明的歧义，告诉
+                    javascript引擎这是一个函数表达式，不是函数声明，可以在后面
+                    加括号，并立即执行函数的代码。
 
-                        (function(a){
-                            console.log(a);   //firebug输出123,使用（）运算符
-                        })(123);
+                    (function(a){
+                        console.log(a);   //firebug输出123,使用（）运算符
+                    })(123);
 
-                        (function(a){
-                            console.log(a);   //firebug输出1234，使用（）运算符
-                        }(1234));
+                    (function(a){
+                        console.log(a);   //firebug输出1234，使用（）运算符
+                    }(1234));
+        
 
 
-
-###原型
-####原型赋值
+<h2 id="prototype">原型</h2>
+<h5 id="assignment">原型赋值</h5>
 *  var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
   * Array,Object,Function 本质上都是函数，获取函数原型属性prototype也是为了便于压缩，如果代码中药扩展属性，
     Object.prototype.xxx = ....
@@ -66,13 +100,10 @@
   > 一段代码使用两次都应该定义成变量
 
 
-#####Object 在理解
+<h5 id="understanding">Object 在理解</h5>
 1. 高程（p148）
-  * 无论什么时候只要创建一个新函数，就会根据一组特定的规则为该函数创建一个prototype（属性值是个对象）
-属性，这个属性指向函数的原型对象。
-
-  * 在默认情况下，所有的原型对象都会自动获取一个constructor属性，这个属性包含指向protorype
-属性所在函数的指针。
+  * 无论什么时候只要创建一个新函数，就会根据一组特定的规则为该函数创建一个prototype（属性值是个对象）属性，这个属性指向函数的原型对象。
+  * 在默认情况下，所有的原型对象都会自动获取一个constructor属性，这个属性包含指向protorype属性所在函数的指针。
 
 
 
@@ -97,20 +128,17 @@
  4. __proto__ 隐式原型
       * 每个对象都有一个隐式的属性，但是有些浏览器是不会让你发现的  
 
-      * 文字版：  每个对象都有一个__proto__属性，指向创建该对象的函数的prototype。
-          ```
-          eg: bill.__proto__ === Employee.protitype  //true
+      * 文字版：  每个对象都有一个__proto__属性，指向创建该对象的函数的prototype:This is another regular paragraph.
 
-          eg: var obj={}
-               obj.__proto__ === Object.prototype  //true
-               Object.prototype.__proto__ === null //true
-    
-          最终的__proto__ 都要指向 Object.prototype（考虑Object.prototype.__proto__,而Object.prototype.__proto__ 是个特例是null 固定的）
-
-          函数是特殊的对象，他当然也是有__proto__
-          Object.__proto__ === Functon.prototype
-          函数是有Function函数来创建的,所以函数的__proto__ 指向的是Function 函数的prototype而, Function的prototye 是一个对象，他的__proto__ 指向的是Object 函数的protype.
-          ```
+      ```
+        eg: bill.__proto__ === Employee.protitype  //true
+        eg: var obj={}
+            obj.__proto__ === Object.prototype  //true
+            Object.prototype.__proto__ === null //true
+      ```
+      最终的__proto__ 都要指向 Object.prototype
+       (考虑Object.prototype.__proto__,而Object.prototype.__proto__ 是个特例是null 固定的)
+        函数是特殊的对象，他当然也是有__proto__Object.__proto__ === Functon.prototype
   
  5. instanceof 运算
       * Instanceof运算符的第一个变量是一个对象，暂时称为A；第二个变量一般是一个函数，暂时称为B。
@@ -142,14 +170,14 @@
  9. 执行上下文（下）               
     函数每调用一次，都会产生一个新的上下文环境因为不同的调用可能产生不同的参数
       ```
-      bill.prototype        //undifined
-      bill.constructor === employee.prototype.constructor
-                            //function employee(name,job,born){this.name=name;
-                              this.job=job;thisborn=born;} //实例是个对象，指向构造函数
+      bill.prototype    //undifined
+      bill.constructor === employee.prototype.constructor  
+      function employee(name, job, born) {
+        this.name=name;
+        this.job=job;thisborn=born;
+      } //实例是个对象，指向构造函数
 
       employee.constructor  //function Function() { [native code] }
-
-
       var obj={}
       obj.constructor       //function Object() { [native code] }   
       ```
@@ -164,7 +192,7 @@
         typeof obj      //object
       ```
         
-        所以Object 更加详细的描述就是function  
+      所以Object 更加详细的描述就是function  
 
 
   10. 扩展
@@ -196,7 +224,7 @@
     function Personal(){};
     var p = new Personal();
     ①从p 画出 完成的__proto__链
-      p-> Personal.prototype-> Object.prototype->null
+    p-> Personal.prototype-> Object.prototype->null
 
     ②Personal() 的原型链
     Personal()-> Function.prototype->Object.prototype->null
@@ -206,7 +234,24 @@
 
     ④console.log(Personal.prototype)
     ```
+  
+<h2 id="isElement">数据判断</h2>
+    _.isElement = function(obj) {
+      return (obj && obj.nodetype === 1);
+    }
+  >如果dom的nodeType的属性,返回boolean
 
+    _.isObject = function(obj){
+        var type = typeof obj;
+        return type === 'function' || type === 'object' && !!obj; 
+    }
+  >javascript 函数和object都是对象,其中null 也是object 要注意使用!!object 来判断
+  
+
+
+
+
+<meta http-equiv="refresh" content="1">
 
 
 
