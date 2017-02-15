@@ -382,4 +382,20 @@
         return min + Math.floor(Math.random() * (max - min + 1))
      }
 
+
+     //mapObject Mapobject
+     _.mapObject = function(obj, iteratee, context){
+        var iteratee = cd(iteratee, context);
+        var keys = _.keys(obj),
+            result  = {},
+            current;
+            console.log(keys)
+            for(var i = 0; i < keys.length; i++) {
+                current = obj[keys[i]];
+                result[keys[i]] = iteratee(current, i, keys)
+            }
+            return result;
+     } 
+
+
 }.call(this))
