@@ -11,7 +11,8 @@
     *   [原型赋值](#assignment)
     *   [Object 在理解](#understanding)
 *   [判断数据](#isElement)
-*   [](#isElement)
+*   [数据判断](#isElement)
+*   [Object](#Object)
 
 
 <h2 id="bindroot">绑定</h2>
@@ -324,7 +325,21 @@ _.isUndefined = function(obj) {
 };
 ```
 
-
+O
+在underscore对象api中，很多函数内部都可以见到下面的一段代码：
+var obj = Object(obj);
+这段代码的意义是：
+如果obj是一个对象，那么Object(obj)返回obj
+**如果obj是undefined或null，那么Object(obj)返回一个{}**
+如果obj是一个原始值(Primitive value)，那么Object(obj)返回一个被包裹的原始值:
+```
+var obj = 2;
+obj = Object(obj); // 相当于new Number(obj);
+// => obj: Number {[[PrimitiveValue]]: 2}
+var value = obj.valueOf();
+// => value: 2
+```
+Object(obj)就是将传入obj进行对象化
 
 
 
