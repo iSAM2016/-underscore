@@ -11,6 +11,8 @@
     *   [原型赋值](#assignment)
     *   [Object 在理解](#understanding)
 *   [判断数据](#isElement)
+*   [Array.prototype.slice新发现](#clone)
+*   [对象相等性判断](#isEqual)
 
 
 <h2 id="bindroot">绑定</h2>
@@ -248,8 +250,57 @@ underscore对象`_`会覆盖全局对象上同名的 `_`属性，underscore会�
   >javascript 函数和object都是对象,其中null 也是object 要注意使用!!object 来判断
   
 
+<h2 id="clone">Array.prototype.slice新发现</h2>
 
+当obj 为array的时候，进行浅复制，发现使用obj.slice()，难道slice有浅复制的功能，查了一下MDNr原文如下：
+> 
+*slice() 方法将数组的一部分**浅拷贝**, 返回到从开始到结束（不包括结束）选择的新数组对象。原始数组不会改变*
 
+```
+
+  _.clone = function() {
+    if(_.isObject(obj)) return obj;
+    return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
+  }
+```
+
+关于这个方法还有
+```
+// 使用slice方法从myCar中创建一个newCar.
+var myHonda = { color: 'red', wheels: 4, engine: { cylinders: 4, size: 2.2 } };
+var myCar = [myHonda, 2, "cherry condition", "purchased 1997"];
+var newCar = myCar.slice(0, 2);
+
+// 输出myCar, newCar,以及各自的myHonda对象引用的color属性.
+print('myCar = ' + myCar.toSource());
+print('newCar = ' + newCar.toSource());
+
+结果是：
+myCar = [{color: 'red', wheels: 4, engine: {cylinders: 4, size: 2.2}}, 2, 'cherry condition', 'purchased 1997']
+newCar = [{color: 'red', wheels: 4, engine: {cylinders: 4, size: 2.2}}, 2]
+
+也就是myHonda是一个整体来进行计算的
+```
+
+<h2 id="isEqual">对象相等性判断</h2>
+
+在进行a和b的比较的过程中，面临如下的问题：
+有如下的:
+
+*  ``0 === -0``
+*  ``null === undefined``
+*  ``NaN != NaN``
+*  ``NaN !== NaN``
+
+方法：
+
+  *  ``0 === -0`` 解决
+    对于该问题，我们可以借助如下等式解决
+    ``1 / a === 1 / b``
+
+  * NaN != NaN 及 NaN !== NaN：
+    如果我们要认为NaN等于NaN（这更加符合认知和语义），我们只需要：
+    ``if(a !== a) return b !== b``
 
 <meta http-equiv="refresh" content="1">
 
