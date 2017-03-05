@@ -11,8 +11,13 @@
     *   [原型赋值](#assignment)
     *   [Object 在理解](#understanding)
 *   [判断数据](#isElement)
+<<<<<<< HEAD
 *   [Array.prototype.slice新发现](#clone)
 *   [对象相等性判断](#isEqual)
+=======
+*   [数据判断](#isElement)
+*   [Object](#Object)
+>>>>>>> 22c8d5e900994fb4f44022f5c061ba1051af3fd1
 
 
 <h2 id="bindroot">绑定</h2>
@@ -238,20 +243,110 @@ underscore对象`_`会覆盖全局对象上同名的 `_`属性，underscore会�
     ```
   
 <h2 id="isElement">数据判断</h2>
+《编写可维护的JavaScript》 中提提到的数据监测方法
+1. string number  undefined boolean 
+    * 这四中数据类型使用typeof 在检测即可
+        typeof '1'  ==  'string'
+        typeof  1   ==  'number'
+        typeof found ==  'boolean' && found
+        typeof undefined  ==  'undefined'
+
+2. null 
+    * 使用  value === null
+3. 引用类型
+    1. 一般  
+        * 使用instanceof 
+
+    2. array
+        * Array.prototype.toString.call(array) == '[object Array]'
+
+ 4. function  
+        * typeof fn === 'function'
+
+
     _.isElement = function(obj) {
       return (obj && obj.nodetype === 1);
     }
+
   >如果dom的nodeType的属性,返回boolean
 
-    _.isObject = function(obj){
-        var type = typeof obj;
-        return type === 'function' || type === 'object' && !!obj; 
-    }
-  >javascript 函数和object都是对象,其中null 也是object 要注意使用!!object 来判断
-  
+```
+ // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp, isError.
+  _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error'], function(name) {
+    _['is' + name] = function(obj) {
+      return toString.call(obj) === '[object ' + name + ']';
+    };
+  });
+
+```
+
+```
+ // null的类型有些特殊，typeof null == 'object'  null == undefined ,检测他就和null自身比较，null用处多是初始化变量，这个变量可能是个对象在没有给变量赋值的时候，理解null可以是对象的占位符 可以var value = null;
+  _.isNull = function(obj) {
+    return obj === null;
+  };
+```
+
+```
+  // 看到源码可以知道，函数也被视为对象，undefined，null，NaN等则不被认为是对象
+  // javascript 函数和object都是对象,其中null 也是object 要注意使用!!object 来判断
+  _.isObject = function(obj) {
+    var type = typeof obj;
+    return type === 'function' || type === 'object' && !!obj;
+  };
+```
+
+```
+     if (typeof /./ != 'function' && typeof Int8Array != 'object') {
+    _.isFunction = function(obj) {
+      return typeof obj == 'function' || false;
+    };
+  }
+```
+
+```
+  _.isBoolean = function(obj) {
+    return obj === true || obj === false || toString.call(obj) === '[object Boolean]';
+  };
+
+```
+
+```
+// 对于Arguments判断，IE9以前的版本，Object.prototype.toString返回的会是'[object Object]'而不是'[object Arguments]，需要通过判断对象是否具有callee来确定其是否Arguments类型，underscore对此进行了修正：
+  if (!_.isArguments(arguments)) {
+    _.isArguments = function(obj) {
+      return _.has(obj, 'callee');
+    };
+  }
+
+```
+
+
+```
+// 使用void 0 原因是undefined 可以被重写
+_.isUndefined = function(obj) {
+  return obj === void 0;
+};
+```
+
+在underscore对象api中，很多函数内部都可以见到下面的一段代码：
+var obj = Object(obj);
+这段代码的意义是：
+如果obj是一个对象，那么Object(obj)返回obj
+**如果obj是undefined或null，那么Object(obj)返回一个{}**
+如果obj是一个原始值(Primitive value)，那么Object(obj)返回一个被包裹的原始值:
+
+```
+var obj = 2;
+obj = Object(obj); // 相当于new Number(obj);
+// => obj: Number {[[PrimitiveValue]]: 2}
+var value = obj.valueOf();
+// => value: 2
+```
+Object(obj)就是将传入obj进行对象化
+
 
 <h2 id="clone">Array.prototype.slice新发现</h2>
-
 当obj 为array的时候，进行浅复制，发现使用obj.slice()，难道slice有浅复制的功能，查了一下MDNr原文如下：
 > 
 *slice() 方法将数组的一部分**浅拷贝**, 返回到从开始到结束（不包括结束）选择的新数组对象。原始数组不会改变*
