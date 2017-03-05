@@ -18,28 +18,7 @@
 
 
 <h2 id="bindroot">绑定</h2>
-underscore对象`_`会覆盖全局对象上同名的 `_`属性，underscore会保留之前就存在的`_` 
-  
-    var previousUnderscore = root._;
-
----
-<h2 id="preblem">问题</h2>
->如果没有理解会标记*不理解* 
-
-1. 测试
-2. if(typeof /./ != 'function' && typeof Int8Array != 'object'){
-3. collectNonEnumProps 函数
-4. _.keys = function(obj) {}
-    if (!_.isObject(obj))
-
-5. optimizeCb 中argu
-
-6. (!undefinedOnly || obj[key] === void 0) 
-7. toArray ==> isArrayLike + isArray
-8.   isArrayLike 和  _.isArray
-9.   集合分为类数组集合和对象集合
-
----
+``var previousUnderscore = root._;``
 
 <h2 id="undefined">undefined</h2>
  在js中undefined是不靠谱的，他能被赋值，如果要获取到正宗的undefined使用void 0
@@ -51,7 +30,6 @@ underscore对象`_`会覆盖全局对象上同名的 `_`属性，underscore会�
 
   将其他没有用的参数赋值给undefined,防止破坏函数内部逻辑
   
----
 <h2 id="closure">作用域包裹</h2>
 
 * IIFE 将window穿入进去
