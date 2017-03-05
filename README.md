@@ -11,13 +11,10 @@
     *   [原型赋值](#assignment)
     *   [Object 在理解](#understanding)
 *   [判断数据](#isElement)
-<<<<<<< HEAD
 *   [Array.prototype.slice新发现](#clone)
 *   [对象相等性判断](#isEqual)
-=======
 *   [数据判断](#isElement)
 *   [Object](#Object)
->>>>>>> 22c8d5e900994fb4f44022f5c061ba1051af3fd1
 
 
 <h2 id="bindroot">绑定</h2>
