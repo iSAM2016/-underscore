@@ -14,8 +14,8 @@
 *   [Array.prototype.slice新发现](#clone)
 *   [对象相等性判断](#isEqual)
 *   [数据判断](#isElement)
-*   [Object](#Object)
-
+*   [对象相等性判断](#isEqual)
+*   [函数节流和防抖](#debounceThrottle)
 
 <h2 id="bindroot">绑定</h2>
 ``var previousUnderscore = root._;``
@@ -29,7 +29,7 @@
     })(window)
 
   将其他没有用的参数赋值给undefined,防止破坏函数内部逻辑
-  
+
 <h2 id="closure">作用域包裹</h2>
 
 * IIFE 将window穿入进去
@@ -371,6 +371,55 @@ newCar = [{color: 'red', wheels: 4, engine: {cylinders: 4, size: 2.2}}, 2]
   * NaN != NaN 及 NaN !== NaN：
     如果我们要认为NaN等于NaN（这更加符合认知和语义），我们只需要：
     ``if(a !== a) return b !== b``
+
+<h2 id="debounceThrottle">函数节流和防抖</h2>
+有些方法触发时会被频发触发，致使产生性能问题
+
+1. window对象的resize、scroll事件
+
+2. 拖拽时的mousemove事件
+
+3. 射击游戏中的mousedown、keydown事件
+
+4. 文字输入、自动完成的keyup事件
+
+
+
+所以我们需要使用函数节流和函数
+
+防抖来解决这个问题
+```
+// 函数防抖 debounce　
+window.addEventListenter('scroll',function() {
+  var timer;
+  return function() {
+    if (timer) {
+        learTimeout(timer);
+        timer = setTimeout(function(){
+            console.log('do somthing')
+        },500)  
+    }
+  }
+}())
+```
+
+
+```
+// 函数节流
+window.addEventListenter('scroll',function() {
+  var timer;
+  var startTime = new Date();
+  return function() {
+    var crrtime = new Daate();
+    if (crrtime > startTime) {
+        timer = setTimeout(function(){
+          console.log('do somthing')
+        },500) 
+        starttime = curTime;       
+    }
+  }
+}())
+```
 
 <meta http-equiv="refresh" content="1">
 
