@@ -244,7 +244,7 @@
     }
 
   >如果dom的nodeType的属性,返回boolean
-
+5.  typeof NaN (number)
 ```
  // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp, isError.
   _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error'], function(name) {
