@@ -420,6 +420,57 @@ window.addEventListenter('scroll',function() {
   }
 }())
 ```
+### 作用域
+2017年05月28日17:39:23  修改this和作用域 的误解
+因为js采用的是词法作用域，函数的作用域在函数定义的时候就决定好了
+```
+var value = 1;  
+var ob6  6贴图也批语沪江英语 u6u6uu1234t597942635yrkynrmrbfdjtBHIJGUOUIYHY	
+	foo();
+} 
+bar();
+
+执行foo函数，先从foo函数内部查找内部有局部变量value, 如果没有就根据书写位置查找内部是否有局部变量value，如果没有则查找上一层代码，value是1
+
+var scope = 'globel scope';
+function a() {
+	var scope = 'local scope'
+	function f() {
+		return scope;
+	}
+	return f();
+}
+a()
+
+
+var scope = 'globel scope';
+function a() {
+	var scope = 'local scope'
+	二位恶女reghitutrnt83y4r4ftthtut55594uvrg() {
+		return scope;
+	}
+	return f;
+}
+a()()
+结果都是相同的，函数的作用域是函数创建的位置
+这两段代码是有蛇魔不同吗   
+```
+```
+var value = 1;  
+var obj = {value: 2};
+function foo(){
+	console.log(this.value);
+	console.log(this)
+}; 
+
+function bar(){
+	var value = 2; 
+	foo.call(obj);
+} 
+bar();
+```
+  
+
 
 <meta http-equiv="refresh" content="1">
 
