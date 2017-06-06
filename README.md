@@ -12,6 +12,12 @@
 *   [作用域](#bindroot)
     *   [作用域类型](#scopeType)
         *   [函数作用域](#functionscope)
+*   [执行上下文](#xecution context)
+    *   [关于Hoisting（变量提升）](#Variable lifting)
+*   [作用域链（scope chain）](#scope chain)
+*   [闭包](#TypeConversion)
+*   [this](#this)
+*   [原型](#prototype)
 *   [类型转换](#TypeConversion)
 *   [判断数据](#isElement)
 *   [Array.prototype.slice新发现](#clone)
@@ -19,7 +25,6 @@
 *   [数据判断](#isElement)
 *   [对象相等性判断](#isEqual)
 *   [函数节流和防抖](#debounceThrottle)
-
 
 
 <h2 id="undefined">undefined</h2>
@@ -122,6 +127,16 @@
               没有发现_.isFunction(constructor)
       ```
 
+
+由于__proto__是每个对象都有的属性，而js 里面万物皆对象，所以会形成一条__proto__连起来的链条递归访问到__proto__必须是null，当js 引擎查找对象的属性的时候，会先查找对象本身会有该属性，如果不存在，会在原型链上查找，不会查找自身的prototype
+![原型链](/img/877d6c73f3b810ddd1692fffd06c290b.png)
+```
+var A = function(){};
+var a = new A();
+console.log(a.__proto__); //Object {}（即构造器function A 的原型对象）
+console.log(a.__proto__.__proto__); //Object {}（即构造器function Object 的原型对象）
+console.log(a.__proto__.__proto__.__proto__); //null
+```
    11. 例子
     ```
     function Personal(){};
@@ -210,7 +225,7 @@ function bar(){
 bar();
 ```
 
-<h5 id="functionscope">函数作用域</h5>
+<h6 id="functionscope">函数作用域</h6>
 立即执行函数表达式
 * IIFE 将window穿入进去
 * JS中(function(){xxx})() *立即执行函数*
@@ -225,33 +240,152 @@ bar();
   * 函数声明：  function name(){}
   * 函数表达式：var fnname = function(){}
   * 匿名函数：  function(){} 匿名函数属于函数表达式
-
   * 两者最主要的区别是： 
-          1. 变量提升
-          2.  函数表达式可以在后面添加扩看，但是命名函数不行吧
-          
-                  function fnName(){
-                        alert('Hello World');
-                    }();//error
+```
+1. 变量提升
+2. 函数表达式可以在后面添加扩看，但是命名函数不行吧
+        function fnName(){
+              alert('Hello World');
+          }();//error
 
-                    function(){
-                        console.log('Hello World');    
-                    }();//error  没有赋值
+          function(){
+              console.log('Hello World');    
+          }();//error  没有赋值
 
-                    而（）、！、+、-、=等运算符，都将函数声明转换成函数表达式，
-                    消除了javascript引擎识别函数表达式和函数声明的歧义，告诉
-                    javascript引擎这是一个函数表达式，不是函数声明，可以在后面
-                    加括号，并立即执行函数的代码。
+          而（）、！、+、-、=等运算符，都将函数声明转换成函数表达式，
+          消除了javascript引擎识别函数表达式和函数声明的歧义，告诉
+          javascript引擎这是一个函数表达式，不是函数声明，可以在后面
+          加括号，并立即执行函数的代码。
 
-                    (function(a){
-                        console.log(a);   //firebug输出123,使用（）运算符
-                    })(123);
+          (function(a){
+              console.log(a);   //firebug输出123,使用（）运算符
+          })(123);
 
-                    (function(a){
-                        console.log(a);   //firebug输出1234，使用（）运算符
-                    }(1234));
+          (function(a){
+              console.log(a);   //firebug输出1234，使用（）运算符
+          }(1234));
+```
 
-<h2 id="functionscope">执行上下文</h2>  
+######普通写法
+```
+var wall = {}; // 声明定义一个命名空间wall
+
+// 定义方法
+(function(window, WALL, undefined){
+    // 给wall命名空间绑定方法say
+    WALL.say = function(){
+        console.log('hello');
+    };
+})(window, wall);
+
+(function(window, WALL, undefined){
+    // 给wall命名空间绑定方法 whoIam
+    WALL.whoIam = function(){
+        console.log('wall');
+    };
+})(window, wall);
+
+// 调用
+wall.say();
+wall.whoIam();
+
+```
+先定义一个命名空间，然后再给这个命名空间加东西。这是最普遍的写法，也是最好理解的。不足的地方就是必须先声明一个命名空间，然后才能执行相关的绑定代码。存在顺序加载的问题。
+
+######放大写法
+```
+var wall = (function(window, WALL, undefined){
+    if(typeof WALL == 'undefined'){
+        WALL = {};
+    }
+
+    // 给wall命名空间绑定方法say
+    WALL.say = function(){
+        console.log('hello');
+    }
+
+    return WALL; // 返回引用
+})(window, wall);
+
+var wall = (function(window, WALL, undefined){
+    if(typeof WALL == 'undefined'){
+        WALL = {};
+    }
+
+    // 给wall命名空间绑定方法 whoIam
+    WALL.whoIam = function(){
+        console.log('wall');
+    }
+
+    return WALL; // 返回引用
+})(window, wall);
+
+// 调用
+wall.say();
+wall.whoIam();
+```
+ 放大模式的好处就是，可以不用考虑代码加载的先后顺序。
+ 因为js允许wall变量进行重复var声明，所以这段代码是可以执行的。
+ 我可以把IIFE函数拆分成多个文件进行加载，而不会出现普通写法需要注意的问题。
+
+ 需要注意的点：
+ 1.IIFE的头部，都要先进行检查命名空间是否已经实例化，如果还没实例化，则进行实例化。
+ 2.IIFE的尾部，都要return命名空间的引用，使后续代码能够得到最新的wall命名空间内容。
+
+#####宽放大写法
+```
+(function(window, WALL, undefined){
+    // 给wall命名空间绑定方法say
+    WALL.say = function(){
+        console.log('hello');
+    }
+})(window, window.wall || (window.wall = {}));
+
+(function(window, WALL, undefined){
+    // 给wall命名空间绑定方法 whoIam
+    WALL.whoIam = function(){
+        console.log('wall');
+    }
+})(window, window.wall || (window.wall = {}));
+
+// 调用
+wall.say();
+wall.whoIam();
+```
+ 宽放大模式的重点注意的地方：就是在实参部分的window.wall || (window.wall = {})。
+ 用||运算符进行取巧。
+ 如果window.wall是已经实例化的，非not defined。则直接返回window.wall的引用，赋值给形参WALL。不会执行||运算符后面的内容。
+ 如果window.wall还未实例化，则进行实例化。这里要注意的点是实例化是一个赋值操作，需要用括号包起来，变成表达式去执行，才不会报错。
+ 表达式(window.wall = {})执行完毕后，会返回新对象window.wall的引用。
+
+ 宽放大模式的好处：是可以切割成多个文件进行加载，而不必考虑文件加载的先后顺序，不存在强耦合关系。
+ 当然，如果IIFE里面的方法互相引用，还是存在加载依赖的问题。这个问题可以用加载器Require.js等工具解决，这里就不讨论了。
+
+#####分文件加载IIFE要注意的点
+```
+;(function(window, WALL, undefined){
+    // 给wall命名空间绑定方法say
+    WALL.say = function(){
+        console.log('hello');
+    }
+})(window, window.wall || (window.wall = {}));
+```
+ 眼尖的已经看出区别了，就是文件开始的地方，先写上分号;。
+ 这样，多个文件合并的时候，才不会出现收尾相接，代码出现错乱的问题。比如下面这种情况：
+```
+// a.js 文件
+wall.log()
+
+// b.js 文件
+(function(window, WALL, undefined){
+    // 给wall命名空间绑定方法say
+    WALL.say = function(){
+        console.log('hello');
+    }
+})(window, window.wall || (window.wall = {}));
+ 由于a.js文件的wall.log()少写了分号，跟b.js文件合并后，js就会认为‘wall.log()(...)’是需要这么执行的，结果代码就报错了。
+```
+<h2 id="Execution context">执行上下文</h2>  
 js在***执行***代码段（全局代码， 函数体， eval）的时候，会做一些准备工作
 
 * 创建arguments对象、检查function函数声明创建、检查var变量声明创建属性
@@ -266,7 +400,7 @@ js在***执行***代码段（全局代码， 函数体， eval）的时候，会
 同一个作用域下，不同的调用会产生不同的执行上下文环境，继而产生不同的变量的值。所以，作用域中变量的值是在执行过程中产生的确定的，而作用域却是在函数创建时就确定了。
 所以，如果要查找一个作用域下某个变量的值，就需要找到这个作用域对应的执行上下文环境，再在其中寻找变量的值。
 
-<h5 id="functionscope">关于Hoisting（变量提升）</h5>  
+<h5 id="Variable lifting">关于Hoisting（变量提升）</h5>  
 ```
 
 (function() {
@@ -283,47 +417,20 @@ js在***执行***代码段（全局代码， 函数体， eval）的时候，会
 
 
 ```
-现在我们可以回答下面这些问题了：
+现在我们可以回答下面这些问题了
+
 
 1. 在foo声明之前，为什么我们可以访问它？
-
 如果我们来跟踪creation stage, 我们知道在代码执行阶段之前，变量已经被创建了。因此在函数流开始执行之前，foo已经在activation object中被定义了。
 
 2. foo 被声明了两次，为什么 foo 最后显示出来是一个function，并不是undefined或者是string？
-
 尽管 foo 被声明了两次，我们知道，在创建阶段，函数的创建是在变量之前的，并且如果属性名在activation object中已经存在的话，我们是会简单的跳过这个声明的。
 因此，对 function foo()的引用在activation object上先被创建了，当解释器到达 var foo 时，我们会发现属性名 foo 已经存在了，因此代码什么都不会做，继续向下执行。
 
 3. 为什么 bar 是undefined？
-
 bar实际上是一个变量，并且被赋值了一个函数的引用。我们知道变量是在创建阶段被创建的，但是它们会被初始化为undefined，所以bar是undefined。希望现在你对JavaScript解释器如何执行你的代码能有一个好的理解了。理解execution context and stack会让你知道为什么你的代码有时候会输出和你最初期望不一样的值。
 
-      ```
-      bill.prototype    //undifined
-      bill.constructor === employee.prototype.constructor  
-      function employee(name, job, born) {
-        this.name=name;
-        this.job=job;thisborn=born;
-      } //实例是个对象，指向构造函数
-
-      employee.constructor  //function Function() { [native code] }
-      var obj={}
-      obj.constructor       //function Object() { [native code] }   
-      ```
-      
-      错误的理解Object是个纯对象!!!
-      举一个错误的例子，比如 obj = {} 和 Object 是一个级别的对象，Object应该是个函数.
-      MDN 中描述到Object：
-         对象构造函数为给定值创建一个对象包装器。如果给定值是  null or undefined，将会创建并返回一个空对象，否则，将返回一个与给定值对应类型的对象。
-         当以非构造函数形式被调用时，Object 等同于 new Object()。
-      ```
-        typeof Object   //function                 
-        typeof obj      //object
-      ```
-        
-      所以Object 更加详细的描述就是function  
-
-<h2 id="functionscope">作用域链（scope chain）</h2>  
+<h2 id="scope chain">作用域链（scope chain）</h2>  
 
 先阅读（词法作用域）
 作用域链:是由当前环境与上层环境的一系列变量对象组成，它保证了当前执行环境对符合访问权限的变量和函数的有序访问。是作用域的具体实施表现
@@ -369,6 +476,20 @@ innerTestEC = {
 
 ![作用域链](/img/5fd09372163bf05c34b3890287f88bd6.png)
 是的，作用域链是由一系列变量对象组成，我们可以在这个单向通道中，查询变量对象中的标识符，这样就可以访问到上一层作用域中的变量了。
+```
+var color = "blue";
+function changeColor(){
+    console.log(color);
+    if (color === "blue"){
+        color = "red";console.log(color);
+    } else {
+        color = "blue";console.log(color);
+    }
+}
+
+changeColor();
+```
+
 
 <h2 id="TypeConversion">闭包</h2>
 应用的两种情况即可——函数作为返回值，函数作为参数传递
@@ -408,20 +529,160 @@ bar(); // 2
 
 这样，我们就可以称fn为闭包。
 
-![作用域链](/img/afbdb2ad2330cf982d2b6fd2d6f3bc3a.png)
-
-
-<h2 id="TypeConversion">原型</h2>
-
-
-由于__proto__是每个对象都有的属性，而js 里面万物皆对象，所以会形成一条__proto__连起来的链条递归访问到__proto__必须是null，当js 引擎查找对象的属性的时候，会先查找对象本身会有该属性，如果不存在，会在原型链上查找，不会查找自身的prototype
-![原型链](/img/877d6c73f3b810ddd1692fffd06c290b.png)
+![闭包](/img/afbdb2ad2330cf982d2b6fd2d6f3bc3a.png)
 ```
-var A = function(){};
-var a = new A();
-console.log(a.__proto__); //Object {}（即构造器function A 的原型对象）
-console.log(a.__proto__.__proto__); //Object {}（即构造器function Object 的原型对象）
-console.log(a.__proto__.__proto__.__proto__); //null
+// 挑战二
+scope = "stone";
+
+function Func() {
+    var scope = "sophie";
+
+    function inner() {
+        console.log(scope);
+    }
+    return inner;
+}
+
+var ret = Func();
+ret();    // ???
+```
+
+```
+// 挑战三
+scope = "stone";
+
+function Func() {
+    var scope = "sophie";
+
+    function inner() {
+        console.log(scope);
+    }
+    scope = "tommy";
+    return inner;
+}
+
+var ret = Func();
+ret();    // ???
+```
+
+```
+// 挑战四
+scope = "stone";
+
+function Bar() {
+    console.log(scope);
+}
+
+function Func() {
+    var scope = "sophie";
+    return Bar;
+}
+
+var ret = Func();
+ret();    // ???
+```
+
+```
+// 挑战五
+var name = "The Window";　　
+var object = {　　　　
+    name: "My Object",
+    getNameFunc: function() {　　　　　　
+        return function() {　　　　　　　　
+            return this.name;　　　　　　
+        };　　　　
+    }　　
+};　　
+console.log(object.getNameFunc()());    // ???
+```
+```
+var name = "The Window";　　
+var object = {　　　　
+    name: "My Object",
+    getNameFunc: function() {
+        console.log(this)　　　　　　
+        return function() {　　　　　　　　
+            return this.name;　　　　　　
+        };　　　　
+    }　　
+};　　
+console.log(object.getNameFunc()());    // ???
+```
+
+<h2 id="this">this</h2>
+this的指向，是在函数被调用的时候确定的
+在函数执行过程中，this一旦被确定，就不可更改了。
+在一个函数上下文中，this由调用者提供，由调用函数的方式来决定。如果调用者函数，被某一个对象所拥有，那么该函数在调用时，内部的this指向该对象。如果函数独立调用，那么该函数内部的this，则指向undefined。但是在非严格模式中，当this指向undefined时，它会被自动指向全局对象。
+
+This 被分为三种情况：全局对象、当前对象或者任意对象;判断处于那种情况，这完全取决于函数的调用方式，JavaScript 中函数的调用有以下几种方式：
+
+* 作为函数调用
+* 作为对象方法调用
+* 作为构造函数调用
+* 使用 apply 或 call 调用
+```
+// demo03
+var a = 20;
+var obj = {
+    a: 10,
+    c: this.a + 20,
+    fn: function () {
+        return this.a;
+    }
+}
+
+console.log(obj.c);
+console.log(obj.fn());
+```
+当obj在全局声明时，无论obj.c在什么地方调用，这里的this都指向全局对象，而当obj在函数环境中声明时，这个this指向undefined，在非严格模式下，会自动转向全局对象
+
+```
+'use strict';
+var a = 20;
+function foo () {
+    var a = 1;
+    var obj = {
+        a: 10, 
+        c: this.a + 20,
+        fn: function () {
+            return this.a;
+        }
+    }
+    return obj.c;
+
+}
+console.log(foo()); // 运行会报错
+```
+```
+var a = 20;
+var foo = {
+    a: 10,
+    getA: function () {
+        return this.a;
+    }
+}
+console.log(foo.getA()); // 10
+
+var test = foo.getA;
+console.log(test());  // 20
+```
+
+```
+function foo() {
+    console.log(this.a)
+}
+
+function active(fn) {
+    fn(); // 真实调用者，为独立调用
+}
+
+var a = 20;
+var obj = {
+    a: 10,
+    getA: foo
+}
+
+active(obj.getA);
 ```
 
 <h2 id="TypeConversion">类型转换</h2>
