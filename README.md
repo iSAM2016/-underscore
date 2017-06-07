@@ -3,6 +3,7 @@
 >参考[源码解析](https://yoyoyohamapi.gitbooks.io/undersercore-analysis/content/base/%E7%BB%93%E6%9E%84.html)
 >参考[JavaScript深入系列15篇](https://juejin.im/post/59278e312f301e006c2e1510)
 >参考[淘金](https://github.com/jawil/blog/issues/4)
+>8张思维导图
 
 ##目录
 *   [undefined](#undefined)
@@ -15,10 +16,10 @@
 *   [执行上下文](#xecution context)
     *   [关于Hoisting（变量提升）](#Variable lifting)
 *   [作用域链（scope chain）](#scope chain)
-*   [闭包](#TypeConversion)
+*   [闭包](#closure)
 *   [this](#this)
 *   [原型](#prototype)
-*   [类型转换](#TypeConversion)
+*   [类型转换](#Type conversion)
 *   [判断数据](#isElement)
 *   [Array.prototype.slice新发现](#clone)
 *   [对象相等性判断](#isEqual)
@@ -179,36 +180,51 @@ function foo(){var c= d =1};foo(); console.log(c); c is not defined
 
 词法作用域是由你写代码时将变量和块作用域写在哪里决定的，上下文的判断是根据调用代码的顺序来决定的
 ```
-var value = 1;  
-var ob6  6贴图也批语沪江英语 u6u6uu1234t597942635yrkynrmrbfdjtBHIJGUOUIYHY 
-  foo();
-} 
-bar();
-
-执行foo函数，先从foo函数内部查找内部有局部变量value, 如果没有就根据书写位置查找内部是否有局部变量value，如果没有则查找上一层代码，value是1
-
-var scope = 'globel scope';
-function a() {
-  var scope = 'local scope'
-  function f() {
-    return scope;
-  }
-  return f();
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f(){
+        return scope;
+    }
+    return f();
 }
-a()
+checkscope();
 
-
-var scope = 'globel scope';
-function a() {
-  var scope = 'local scope'
-  二位恶女reghitutrnt83y4r4ftthtut55594uvrg() {
-    return scope;
-  }
-  return f;
+var scope = "global scope";
+function checkscope(){
+    var scope = "local scope";
+    function f(){
+        return scope;
+    }
+    return f;
 }
-a()()
+checkscope()();
 结果都是相同的，函数的作用域是函数创建的位置
-这两段代码是有蛇魔不同吗   
+这两段代码是有蛇魔不同吗   执行上下文
+```
+```
+function foo() {
+    console.log(a);
+    a = 1;
+}
+
+foo(); // ???
+
+function bar() {
+    a = 1;
+    console.log(a);
+}
+bar(); // ???
+```
+
+```
+console.log(foo);
+
+function foo(){
+    console.log("foo");
+}
+
+var foo = 1;
 ```
 ```
 var value = 1;  
@@ -400,9 +416,11 @@ js在***执行***代码段（全局代码， 函数体， eval）的时候，会
 同一个作用域下，不同的调用会产生不同的执行上下文环境，继而产生不同的变量的值。所以，作用域中变量的值是在执行过程中产生的确定的，而作用域却是在函数创建时就确定了。
 所以，如果要查找一个作用域下某个变量的值，就需要找到这个作用域对应的执行上下文环境，再在其中寻找变量的值。
 
+
+
+
 <h5 id="Variable lifting">关于Hoisting（变量提升）</h5>  
 ```
-
 (function() {
     console.log(typeof foo); // function pointer
     console.log(typeof bar); // undefined
@@ -491,7 +509,7 @@ changeColor();
 ```
 
 
-<h2 id="TypeConversion">闭包</h2>
+<h2 id="closure">闭包</h2>
 应用的两种情况即可——函数作为返回值，函数作为参数传递
 >假设函数A在函数B的内部进行定义了，并在函数B的作用域之外执行（不管是上层作用域，下层作用域，还有其他作用域），那么A就是一个闭包
 ```
@@ -685,42 +703,221 @@ var obj = {
 active(obj.getA);
 ```
 
-<h2 id="TypeConversion">类型转换</h2>
+<h2 id="Type conversion">类型转换</h2>
+```
+[]==[]
+//false
+[]==![]
+//true
+{}==!{}
+//false
+{}==![]
+//VM1896:1 Uncaught SyntaxError: Unexpected token ==
+![]=={}
+//false
+[]==!{}
+//true
+undefined==null
+//true
+```
+有点js基础应该知道对象是引用类型,就会一眼看出来[] == []会输出false,因为左边的[]和右边的[]看起来长的一样,但是他们引用的地址并不同,这个是同一类型的比较,所以相对没那么麻烦
+```
+var bool = new Boolean(0);
+if (bool) {
+  alert('true');
+} else {
+  alert('false');
+}
+//true 
+
+
+var bool =  Boolean(0);
+if (bool) {
+  alert('true');
+} else {
+  alert('false');
+}//false
+
+```
+
+###### 假值
+6个
+> 0或+0、-0，NaN
+""
+false
+undefined
+null
+
+######其他基本类型转化为字符串，基本和预期的一样
+```
+console.log("" + null);      // "null"
+console.log("" + undefined); // "undefined"
+console.log("" + false);     // "false"
+console.log("" + true);      // "true"
+console.log("" + 0);         // "0"
+console.log("" + NaN);       // "NaN"
+console.log("" + Infinity);  // "Infinity"
+```
+
+######其他基本类型转化为数字，需要特殊记忆：
+```
+console.log(+null);          // 0
+console.log(+undefined);     // NaN
+console.log(+false);         // 0
+console.log(+true);          // 1
+console.log(+"");            // 0
+console.log(+'1');           // 1
+console.log(+'1x');          // NaN 
+```
+
+######引用类型转换为布尔，始终为true
+
+######引用类型转换为字符串
+>1.优先调用toString方法（如果有），看其返回结果是否是原始类型，如果是，转化为字符串，返回。
+2.否则，调用valueOf方法（如果有），看其返回结果是否是原始类型，如果是，转化为字符串，返回。
+3.其他报错。
+
+######引用类型转化为数字
+>1.优先调用valueOf方法（如果有），看其返回结果是否是基本类型，如果是，转化为数字，返回。
+2.否则，调用toString方法（如果有），看其返回结果是否是基本类型，如果是，转化为数字，返回。
+3.其他报错。
+
+首先我们看看常见引用类型toString和valueOf返回什么？
+>var a = {};
+console.dir(a.toString());   // "[object Object]"
+console.dir(a.valueOf());    // 对象本身
+
+>var b = [1, 2, 3];
+console.dir(b.toString());   // "1,2,3"
+console.dir(b.valueOf());    // 对象本身
+
+>var c = [[1],[2]];
+console.dir(c.toString());   // "1,2"
+console.dir(c.valueOf());    // 对象本身
+
+>var d = function() {return 2};
+console.dir(d.toString());   // "function() {return 2}"
+console.dir(d.valueOf());    // 对象本身
+
+
+因此对应的转换为字符串和数字的情形是：
+>var a = {};
+console.dir(a + "");         // "[object Object]"
+console.dir(+a);             // NaN
+
+>var b = [1, 2, 3];
+console.dir(b + "");         // "1,2,3"
+console.dir(+b);             // NaN
+
+>var c = [[1],[2]];
+console.dir(c + "");         // "1,2"
+console.dir(+c);             // NaN
+
+>var d = function() {return 2};
+console.dir(d + "");         // "function () {return 2}"
+console.dir(+d);             // NaN
+
+>再来个报错的情形：
+var a = {};
+a.toString = function() {return {};}
+console.log("" + a);         // 报错
+console.log(+a)              // 报错
+
+######双等号，如果两边类型不同，会有隐式转换发生。犀牛书75页总结如下：
+>1，null和undefined，相等。
+2，数字和字符串，转化为数字再比较。
+3，如果有true或false，转换为1或0，再比较。
+4，如果有引用类型，优先调用valueOf。
+5，其余都不相等。
+
+```
+console.log(undefined == false); // false
+console.log(null == false);      // false
+console.log(0 == false);         // true
+console.log(NaN == false);       // false
+console.log("" == false);        // true
+
+1 == { valueOf: function() {return 1;} }    // true
+1 + { valueOf: function() {return 1;} }    // 2
+```
+
+0 == false之所以为true根据第3条。
+"" == false之所以为true根据第3条，变成了"" == 0,再根据第2条。
+
+######NaN
+说到 NaN，就不得不提一下 isNaN() 方法，isNaN() 方法自带隐式类型转换，该方法在测试其参数之前，会先调用 Number() 方法将其转换为数字。所以 isNaN('1') 这个语句中明明用一个字符串去测试，返回值仍然为 false 也就不足为怪了。
+
+######object
+当字符串和对象进行 + 运算的时候，Javascript 会通过对象的 toString() 方法将其自身转换为字符串，然后进行连接操作。
+
+>"1" + { toString: function() {return 1;} }    // "11"
+
+之所以说它特殊，是因为当一个对象同时包含 toString() 和 valueOf() 方法的时候，运算符 + 应该调用哪个方法并不明显(做字符串连接还是加法应该根据其参数类型，但是由于隐式类型转换的存在，类型并不显而易见。)，Javascript 会盲目的选择 valueOf() 方法而不是 toString() 来解决这个问题。这就意味着如果你打算对一个对象做字符串连接的操作，但结果却是......
+
+```
+var obj = {
+    toString: function() { return "Object CustomObj"; },
+    valueOf: function() { return 1; }
+};
+
+console.log("Object: " + obj);    // "Object: 1"
+```
+
+第4条再来一个例子：
+>console.log([[2]] == 2)
+
+其上结果为true，原因如下：
+[[2]]的valueOf是对象本身，不是基本类型。
+尝试调用toString的结果是'2'。
+因此变成了'2'和数字2的比较。根据第2条，相等。WTF!!
+
+```
+"1" + 2;    // "12"
+1 + "2";    // "12"
+1 + 2 + "3";    // "33"
 
 console.log(1 + '2' + '2');
 console.log(1 + + '2' + '2');
 console.log('A' - 'B' + '2');
 console.log('A' - "B" + 2);
-
+```
   
 <h2 id="isElement">数据判断</h2>
 《编写可维护的JavaScript》 中提提到的数据监测方法
-1. string number  undefined boolean 
-    * 这四中数据类型使用typeof 在检测即可
+
+* string number  undefined boolean 
+
+>这四中数据类型使用typeof 在检测即可
         typeof '1'  ==  'string'
         typeof  1   ==  'number'
         typeof found ==  'boolean' && found
         typeof undefined  ==  'undefined'
 
-2. null 
-    * 使用  value === null
-3. 引用类型
-    1. 一般  
-        * 使用instanceof 
+* null
 
+>使用  value === null
+
+* 引用类型
+
+>
+    1. 一般  
+         * 使用instanceof 
     2. array
         * Array.prototype.toString.call(array) == '[object Array]'
 
- 4. function  
-        * typeof fn === 'function'
+ * function
+   
+>  typeof fn === 'function'
 
-
+```
     _.isElement = function(obj) {
       return (obj && obj.nodetype === 1);
     }
+  如果dom的nodeType的属性,返回boolean
+```
 
-  >如果dom的nodeType的属性,返回boolean
-5.  typeof NaN (number)
+* typeof NaN (number)
+
 ```
  // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp, isError.
   _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error'], function(name) {
@@ -898,6 +1095,34 @@ window.addEventListenter('scroll',function() {
 ```
 
 
+
+<h2 id="debounceThrottle">定时器的面试题</h2>
+
+```
+console.log(1);
+
+setTimeout(function() {
+  console.log(2);
+}, 0);
+
+$.ajax({
+    url: "../index.php",  //假如上一级目录下有php文件，并且echo '3';
+    data: 'GET',
+    success: function(data) {
+        console.log(data);
+    },      
+})
+
+new Promise(function(resolve, reject) {
+    console.log(4);
+    resolve();
+}).then(function() {
+    console.log(5);
+}).then(function() {
+    console.log(6);
+})
+console.log(7);
+```
 
 
 <meta http-equiv="refresh" content="1">
