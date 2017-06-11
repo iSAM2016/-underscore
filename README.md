@@ -13,13 +13,13 @@
 *   [作用域](#bindroot)
     *   [作用域类型](#scopeType)
         *   [函数作用域](#functionscope)
-*   [执行上下文](#xecution context)
+*   [执行上下文](#Execution context)
     *   [关于Hoisting（变量提升）](#Variable lifting)
 *   [作用域链（scope chain）](#scope chain)
 *   [闭包](#closure)
 *   [this](#this)
-*   [原型](#prototype)
 *   [类型转换](#Type conversion)
+*   [事件循环机制](#Event loop)
 *   [判断数据](#isElement)
 *   [Array.prototype.slice新发现](#clone)
 *   [对象相等性判断](#isEqual)
@@ -130,7 +130,7 @@
 
 
 由于__proto__是每个对象都有的属性，而js 里面万物皆对象，所以会形成一条__proto__连起来的链条递归访问到__proto__必须是null，当js 引擎查找对象的属性的时候，会先查找对象本身会有该属性，如果不存在，会在原型链上查找，不会查找自身的prototype
-![原型链](/img/877d6c73f3b810ddd1692fffd06c290b.png)
+![原型链](./img/877d6c73f3b810ddd1692fffd06c290b.png)
 ```
 var A = function(){};
 var a = new A();
@@ -161,7 +161,7 @@ console.log(a.__proto__.__proto__.__proto__); //null
 
 作用域： 根据名称查找变量的一套规则,作用域最大的用处就是隔离变量，不同作用域下同名变量不会有冲突
 当一个块或者一个函数嵌套在另外一个块或者函数的时候，就发生了作用域的嵌套
-![作用域嵌套](/img/241708372951952.png)
+![作用域嵌套](./img/241708372951952.png)
 ```
 function foo(a){console.log(a + b); b= a;}; foo(2)// b is not defined
 function foo(a){console.log(a + b); var b= a;}; foo(2) //NaN
@@ -401,6 +401,7 @@ wall.log()
 })(window, window.wall || (window.wall = {}));
  由于a.js文件的wall.log()少写了分号，跟b.js文件合并后，js就会认为‘wall.log()(...)’是需要这么执行的，结果代码就报错了。
 ```
+
 <h2 id="Execution context">执行上下文</h2>  
 js在***执行***代码段（全局代码， 函数体， eval）的时候，会做一些准备工作
 
@@ -492,7 +493,7 @@ innerTestEC = {
 很多人会误解为当前作用域与上层作用域为包含关系，但其实并不是。以最前端为起点，最末端为终点的单方向通道我认为是更加贴切的形容。如图。
 ```
 
-![作用域链](/img/5fd09372163bf05c34b3890287f88bd6.png)
+![作用域链](./img/5fd09372163bf05c34b3890287f88bd6.png)
 是的，作用域链是由一系列变量对象组成，我们可以在这个单向通道中，查询变量对象中的标识符，这样就可以访问到上一层作用域中的变量了。
 ```
 var color = "blue";
@@ -547,7 +548,7 @@ bar(); // 2
 
 这样，我们就可以称fn为闭包。
 
-![闭包](/img/afbdb2ad2330cf982d2b6fd2d6f3bc3a.png)
+![闭包](./img/afbdb2ad2330cf982d2b6fd2d6f3bc3a.png)
 ```
 // 挑战二
 scope = "stone";
@@ -881,7 +882,76 @@ console.log(1 + + '2' + '2');
 console.log('A' - 'B' + '2');
 console.log('A' - "B" + 2);
 ```
-  
+
+
+<h2 id="Event loop">事件循环机制</h2>
+>[参考](http://www.jianshu.com/p/12b9f73c5a4f)
+
+* js 有一个大的特点是是单线程，而这个单线程中拥有唯一的一个事件循环
+* js 除了依靠函数调用栈来搞定函数的执行顺序外，还依靠任务队列(task queue)来搞定另外一些代码的执行。
+* 一个线程中，事件循环是唯一的，但是任务队列可以拥有多个。
+* 任务队列又分为macro-task（宏任务）与micro-task（微任务），在最新标准中，它们被分别称为task与jobs。
+* macro-task大概包括：script(整体代码), setTimeout, setInterval, setImmediate, I/O, UI rendering。
+* micro-task大概包括: process.nextTick, Promise, Object.observe(已废弃), MutationObserver(html5新特性)
+* setTimeout/Promise等我们称之为任务源。而进入任务队列的是他们指定的具体执行任务。
+* 来自不同任务源的任务会进入到不同的任务队列。其中setTimeout与setInterval是同源的。
+* 事件循环的顺序，决定了JavaScript代码的执行顺序。它从script(整体代码)开始第一次循环。之后全局上下文进入函数调用栈。直到调用栈清空(只剩全局)，然后执行所有的micro-task。当所有可执行的micro-task执行完毕之后。循环再次从macro-task开始，找到其中一个任务队列执行完毕，然后再执行所有的micro-task，这样一直循环下去。(**在每一次事件循环中，macrotask 只会提取一个执行，而 microtask 会一直提取，直到 microtasks 队列清空。**)
+* 其中每一个任务的执行，无论是macro-task还是micro-task，都是借助函数调用栈来完成。
+
+```
+// setTimeout中的回调函数才是进入任务队列的任务
+setTimeout(function() {
+  console.log('xxxx');
+})
+// 非常多的同学对于setTimeout的理解存在偏差。所以大概说一下误解：
+// setTimeout作为一个任务分发器，这个函数会立即执行，而它所要分发的任务，也就是它的第一个参数，才是延迟执行
+```
+
+demo
+```
+// 为了方便理解，我以打印出来的字符作为当前的任务名称
+setTimeout(function() {
+    console.log('timeout1');
+})
+
+new Promise(function(resolve) {
+    console.log('promise1');
+    for(var i = 0; i < 1000; i++) {
+        i == 99 && resolve();
+    }
+    console.log('promise2');
+}).then(function() {
+    console.log('then1');
+})
+
+console.log('global1');
+```
+
+首先，事件循环从宏任务队列开始，这个时候，宏任务队列中，只有一个script(整体代码)任务。每一个任务的执行顺序，都依靠函数调用栈来搞定，而当遇到任务源时，则会先分发任务到对应的队列中去，所以，上面例子的第一步执行如下图所示。
+![1](./img/599584-92fc0827aa39e325.png)
+
+第二步：script任务执行时首先遇到了setTimeout，setTimeout为一个宏任务源，那么他的作用就是将任务分发到它对应的队列中。
+![2](./img/599584-2a99131c2572f898.png)
+
+第三步：script执行时遇到Promise实例。Promise构造函数中的第一个参数，是在new的时候执行，因此不会进入任何其他的队列，而是直接在当前任务直接执行了，而后续的.then则会被分发到micro-task的Promise队列中去。
+
+因此，构造函数执行时，里面的参数进入函数调用栈执行。for循环不会进入任何队列，因此代码会依次执行，所以这里的promise1和promise2会依次输出。
+
+![3](./img/599584-774ec33de48c1d41.jpg)
+![4](./img/599584-8b5e93798f6c9d52.png)
+![5](./img/599584-521c5da565a35a45.png)
+script任务继续往下执行，最后只有一句输出了globa1，然后，全局任务就执行完毕了。
+
+第四步：第一个宏任务script执行完毕之后，就开始执行所有的可执行的微任务。这个时候，微任务中，只有Promise队列中的一个任务then1，因此直接执行就行了，执行结果输出then1，当然，他的执行，也是进入函数调用栈中执行的。
+![6](./img/599584-dd7673edbbe5e687.png)
+第五步：当所有的micro-tast执行完毕之后，表示第一轮的循环就结束了。这个时候就得开始第二轮的循环。第二轮循环仍然从宏任务macro-task开始。
+![7](./img/599584-881e739c134cb6c9.jpg)
+这个时候，我们发现宏任务中，只有在setTimeout队列中还要一个timeout1的任务等待执行。因此就直接执行即可。
+![8](./img/599584-c4ea234b27c5f2f2.png)
+这个时
+
+
+
 <h2 id="isElement">数据判断</h2>
 《编写可维护的JavaScript》 中提提到的数据监测方法
 
