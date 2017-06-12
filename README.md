@@ -40,8 +40,9 @@
 
 <h2 id="prototype">原型</h2>
 <h5 id="assignment">原型赋值</h5>
-*  var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
-  * Array,Object,Function 本质上都是函数，获取函数原型属性prototype也是为了便于压缩，如果代码中药扩展属性，
+
+* var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
+* Array,Object,Function 本质上都是函数，获取函数原型属性prototype也是为了便于压缩，如果代码中药扩展属性，
     Object.prototype.xxx = ....
   > 这种代码是不可压缩，Object prototype 这些名字修改了浏览器不认识，刚知道啊
   > 一段代码使用两次都应该定义成变量
@@ -49,8 +50,8 @@
 
 <h5 id="understanding">Object 在理解</h5>
 1. 高程（p148）
-  * 无论什么时候只要创建一个新函数，就会根据一组特定的规则为该函数创建一个prototype（属性值是个对象）属性，这个属性指向函数的原型对象。
-  * 在默认情况下，所有的原型对象都会自动获取一个constructor属性，这个属性包含指向protorype属性所在函数的指针。
+* 无论什么时候只要创建一个新函数，就会根据一组特定的规则为该函数创建一个prototype（属性值是个对象）属性，这个属性指向函数的原型对象。
+* 在默认情况下，所有的原型对象都会自动获取一个constructor属性，这个属性包含指向protorype属性所在函数的指针。
 
 2. 原型和原型链 
 > [参考王福朋博客](http://www.cnblogs.com/wangfupeng1988/tag/%E5%8E%9F%E5%9E%8B/)
@@ -707,23 +708,26 @@ active(obj.getA);
 ```
 
 <h2 id="Type conversion">类型转换</h2>
+
 ```
-[]==[]
-//false
-[]==![]
-//true
-{}==!{}
-//false
-{}==![]
-//VM1896:1 Uncaught SyntaxError: Unexpected token ==
-![]=={}
-//false
-[]==!{}
-//true
-undefined==null
-//true
+  []==[]
+  //false
+  []==![]
+  //true
+  {}==!{}
+  //false
+  {}==![]
+  //VM1896:1 Uncaught SyntaxError: Unexpected token ==
+  ![]=={}
+  //false
+  []==!{}
+  //true
+  undefined==null
+  //true
 ```
+
 有点js基础应该知道对象是引用类型,就会一眼看出来[] == []会输出false,因为左边的[]和右边的[]看起来长的一样,但是他们引用的地址并不同,这个是同一类型的比较,所以相对没那么麻烦
+
 ```
 var bool = new Boolean(0);
 if (bool) {
@@ -751,41 +755,46 @@ false
 undefined
 null
 
-######其他基本类型转化为字符串，基本和预期的一样
+###### 其他基本类型转化为字符串，基本和预期的一样
+
 ```
-console.log("" + null);      // "null"
-console.log("" + undefined); // "undefined"
-console.log("" + false);     // "false"
-console.log("" + true);      // "true"
-console.log("" + 0);         // "0"
-console.log("" + NaN);       // "NaN"
-console.log("" + Infinity);  // "Infinity"
+  console.log("" + null);      // "null"
+  console.log("" + undefined); // "undefined"
+  console.log("" + false);     // "false"
+  console.log("" + true);      // "true"
+  console.log("" + 0);         // "0"
+  console.log("" + NaN);       // "NaN"
+  console.log("" + Infinity);  // "Infinity"
 ```
 
-######其他基本类型转化为数字，需要特殊记忆：
+###### 其他基本类型转化为数字，需要特殊记忆：
+
 ```
-console.log(+null);          // 0
-console.log(+undefined);     // NaN
-console.log(+false);         // 0
-console.log(+true);          // 1
-console.log(+"");            // 0
-console.log(+'1');           // 1
-console.log(+'1x');          // NaN 
+  console.log(+null);          // 0
+  console.log(+undefined);     // NaN
+  console.log(+false);         // 0
+  console.log(+true);          // 1
+  console.log(+"");            // 0
+  console.log(+'1');           // 1
+  console.log(+'1x');          // NaN 
 ```
 
-######引用类型转换为布尔，始终为true
+###### 引用类型转换为布尔，始终为true
 
-######引用类型转换为字符串
+###### 引用类型转换为字符串
+
 >1.优先调用toString方法（如果有），看其返回结果是否是原始类型，如果是，转化为字符串，返回。
 2.否则，调用valueOf方法（如果有），看其返回结果是否是原始类型，如果是，转化为字符串，返回。
 3.其他报错。
 
-######引用类型转化为数字
+###### 引用类型转化为数字
+
 >1.优先调用valueOf方法（如果有），看其返回结果是否是基本类型，如果是，转化为数字，返回。
 2.否则，调用toString方法（如果有），看其返回结果是否是基本类型，如果是，转化为数字，返回。
 3.其他报错。
 
 首先我们看看常见引用类型toString和valueOf返回什么？
+
 >var a = {};
 console.dir(a.toString());   // "[object Object]"
 console.dir(a.valueOf());    // 对象本身
@@ -804,6 +813,7 @@ console.dir(d.valueOf());    // 对象本身
 
 
 因此对应的转换为字符串和数字的情形是：
+
 >var a = {};
 console.dir(a + "");         // "[object Object]"
 console.dir(+a);             // NaN
@@ -826,31 +836,35 @@ a.toString = function() {return {};}
 console.log("" + a);         // 报错
 console.log(+a)              // 报错
 
-######双等号，如果两边类型不同，会有隐式转换发生。犀牛书75页总结如下：
+###### 双等号，如果两边类型不同，会有隐式转换发生。犀牛书75页总结如下：
+
 >1，null和undefined，相等。
 2，数字和字符串，转化为数字再比较。
 3，如果有true或false，转换为1或0，再比较。
 4，如果有引用类型，优先调用valueOf。
 5，其余都不相等。
 
-```
-console.log(undefined == false); // false
-console.log(null == false);      // false
-console.log(0 == false);         // true
-console.log(NaN == false);       // false
-console.log("" == false);        // true
 
-1 == { valueOf: function() {return 1;} }    // true
-1 + { valueOf: function() {return 1;} }    // 2
+```
+  console.log(undefined == false); // false
+  console.log(null == false);      // false
+  console.log(0 == false);         // true
+  console.log(NaN == false);       // false
+  console.log("" == false);        // true
+
+  1 == { valueOf: function() {return 1;} }    // true
+  1 + { valueOf: function() {return 1;} }    // 2
 ```
 
 0 == false之所以为true根据第3条。
 "" == false之所以为true根据第3条，变成了"" == 0,再根据第2条。
 
-######NaN
+###### NaN
+
 说到 NaN，就不得不提一下 isNaN() 方法，isNaN() 方法自带隐式类型转换，该方法在测试其参数之前，会先调用 Number() 方法将其转换为数字。所以 isNaN('1') 这个语句中明明用一个字符串去测试，返回值仍然为 false 也就不足为怪了。
 
-######object
+###### object
+
 当字符串和对象进行 + 运算的时候，Javascript 会通过对象的 toString() 方法将其自身转换为字符串，然后进行连接操作。
 
 >"1" + { toString: function() {return 1;} }    // "11"
@@ -901,32 +915,34 @@ console.log('A' - "B" + 2);
 * 其中每一个任务的执行，无论是macro-task还是micro-task，都是借助函数调用栈来完成。
 
 ```
-// setTimeout中的回调函数才是进入任务队列的任务
-setTimeout(function() {
-  console.log('xxxx');
-})
-// 非常多的同学对于setTimeout的理解存在偏差。所以大概说一下误解：
-// setTimeout作为一个任务分发器，这个函数会立即执行，而它所要分发的任务，也就是它的第一个参数，才是延迟执行
+
+  // setTimeout中的回调函数才是进入任务队列的任务
+  setTimeout(function() {
+    console.log('xxxx');
+  })
+  // 非常多的同学对于setTimeout的理解存在偏差。所以大概说一下误解：
+  // setTimeout作为一个任务分发器，这个函数会立即执行，而它所要分发的任务，也就是它的第一个参数，才是延迟执行
 ```
 
 demo
 ```
-// 为了方便理解，我以打印出来的字符作为当前的任务名称
-setTimeout(function() {
-    console.log('timeout1');
-})
 
-new Promise(function(resolve) {
-    console.log('promise1');
-    for(var i = 0; i < 1000; i++) {
-        i == 99 && resolve();
-    }
-    console.log('promise2');
-}).then(function() {
-    console.log('then1');
-})
+  // 为了方便理解，我以打印出来的字符作为当前的任务名称
+  setTimeout(function() {
+      console.log('timeout1');
+  })
 
-console.log('global1');
+  new Promise(function(resolve) {
+      console.log('promise1');
+      for(var i = 0; i < 1000; i++) {
+          i == 99 && resolve();
+      }
+      console.log('promise2');
+  }).then(function() {
+      console.log('then1');
+  })
+
+  console.log('global1');
 ```
 
 首先，事件循环从宏任务队列开始，这个时候，宏任务队列中，只有一个script(整体代码)任务。每一个任务的执行顺序，都依靠函数调用栈来搞定，而当遇到任务源时，则会先分发任务到对应的队列中去，所以，上面例子的第一步执行如下图所示。
