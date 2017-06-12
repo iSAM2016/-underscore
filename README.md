@@ -18,8 +18,9 @@
 *   [作用域链（scope chain）](#scopeChain)
 *   [闭包](#closure)
 *   [this](#this)
-*   [类型转换](#Type conversion)
-*   [事件循环机制](#Event)
+*   [类型转换](#conversion)
+*   [事件循环机制](#Event)>
+    *   [定时器的面试题](#settimeout)
 *   [判断数据](#isElement)
 *   [Array.prototype.slice新发现](#clone)
 *   [对象相等性判断](#isEqual)
@@ -31,6 +32,7 @@
 <h2 id="undefined">undefined</h2>
  在js中undefined是不靠谱的，他能被赋值，如果要获取到正宗的undefined使用void 0
  在一些框架中这样使用
+
 ```
     (function(window,undefined) {
     // ...
@@ -50,6 +52,7 @@
 
 <h5 id="understanding">Object 在理解</h5>
 1. 高程（p148）
+
 * 无论什么时候只要创建一个新函数，就会根据一组特定的规则为该函数创建一个prototype（属性值是个对象）属性，这个属性指向函数的原型对象。
 * 在默认情况下，所有的原型对象都会自动获取一个constructor属性，这个属性包含指向protorype属性所在函数的指针。
 
@@ -707,7 +710,7 @@ var obj = {
 active(obj.getA);
 ```
 
-<h2 id="Type conversion">类型转换</h2>
+<h2 id="conversion">类型转换</h2>
 
 ```
   []==[]
@@ -968,6 +971,48 @@ script任务继续往下执行，最后只有一句输出了globa1，然后，�
 ![8](./img/599584-c4ea234b27c5f2f2.png)
 这个时
 
+<h5 id="settimeout">定时器的面试题</h5>
+>[80% 应聘者都不及格的 JS 面试题](https://juejin.im/post/58cf180b0ce4630057d6727c)
+
+```
+  console.log(1);
+
+  setTimeout(function() {
+    console.log(2);
+  }, 0);
+
+  $.ajax({
+      url: "../index.php",  //假如上一级目录下有php文件，并且echo '3';
+      data: 'GET',
+      success: function(data) {
+          console.log(data);
+      },      
+  })
+
+  new Promise(function(resolve, reject) {
+      console.log(4);
+      resolve();
+  }).then(function() {
+      console.log(5);
+  }).then(function() {
+      console.log(6);
+  })
+  console.log(7);
+```
+
+```
+  for (var i = 0; i < 5; i++) {
+  setTimeout((function(i) {
+    console.log(i);
+  })(i), i * 1000);
+  }
+  蛤？什么鬼，这是什么情况，让我想想。这里给 setTimeout 传递了一个立即执行函数。额，setTimeout 可以接受函数或者字符串作为参数，那么这里立即执行函数是个啥呢，应该是个 undefined ，也就是说等价于：
+
+  setTimeout(undefined, ...);
+  而立即执行函数会立即执行，那么应该是立马输出的。
+
+  “应该是立马输出 0 到 4 吧。”
+```
 
 
 <h2 id="isElement">数据判断</h2>
@@ -1183,34 +1228,6 @@ window.addEventListenter('scroll',function() {
 ```
 
 
-
-<h2 id="debounceThrottle">定时器的面试题</h2>
-
-```
-  console.log(1);
-
-  setTimeout(function() {
-    console.log(2);
-  }, 0);
-
-  $.ajax({
-      url: "../index.php",  //假如上一级目录下有php文件，并且echo '3';
-      data: 'GET',
-      success: function(data) {
-          console.log(data);
-      },      
-  })
-
-  new Promise(function(resolve, reject) {
-      console.log(4);
-      resolve();
-  }).then(function() {
-      console.log(5);
-  }).then(function() {
-      console.log(6);
-  })
-  console.log(7);
-```
 
 
 <meta http-equiv="refresh" content="1">
