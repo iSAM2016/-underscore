@@ -13,13 +13,13 @@
 *   [作用域](#bindroot)
     *   [作用域类型](#scopeType)
         *   [函数作用域](#functionscope)
-*   [执行上下文](#Execution context)
-    *   [关于Hoisting（变量提升）](#Variable lifting)
-*   [作用域链（scope chain）](#scope chain)
+*   [执行上下文](#context)
+    *   [关于Hoisting（变量提升）](#Variable)
+*   [作用域链（scope chain）](#scopeChain)
 *   [闭包](#closure)
 *   [this](#this)
 *   [类型转换](#Type conversion)
-*   [事件循环机制](#Event loop)
+*   [事件循环机制](#Event)
 *   [判断数据](#isElement)
 *   [Array.prototype.slice新发现](#clone)
 *   [对象相等性判断](#isEqual)
@@ -282,7 +282,7 @@ bar();
           }(1234));
 ```
 
-######普通写法
+###### 普通写法
 ```
 var wall = {}; // 声明定义一个命名空间wall
 
@@ -308,7 +308,7 @@ wall.whoIam();
 ```
 先定义一个命名空间，然后再给这个命名空间加东西。这是最普遍的写法，也是最好理解的。不足的地方就是必须先声明一个命名空间，然后才能执行相关的绑定代码。存在顺序加载的问题。
 
-######放大写法
+###### 放大写法
 ```
 var wall = (function(window, WALL, undefined){
     if(typeof WALL == 'undefined'){
@@ -348,7 +348,7 @@ wall.whoIam();
  1.IIFE的头部，都要先进行检查命名空间是否已经实例化，如果还没实例化，则进行实例化。
  2.IIFE的尾部，都要return命名空间的引用，使后续代码能够得到最新的wall命名空间内容。
 
-#####宽放大写法
+##### 宽放大写法
 ```
 (function(window, WALL, undefined){
     // 给wall命名空间绑定方法say
@@ -377,7 +377,7 @@ wall.whoIam();
  宽放大模式的好处：是可以切割成多个文件进行加载，而不必考虑文件加载的先后顺序，不存在强耦合关系。
  当然，如果IIFE里面的方法互相引用，还是存在加载依赖的问题。这个问题可以用加载器Require.js等工具解决，这里就不讨论了。
 
-#####分文件加载IIFE要注意的点
+##### 分文件加载IIFE要注意的点
 ```
 ;(function(window, WALL, undefined){
     // 给wall命名空间绑定方法say
@@ -402,7 +402,7 @@ wall.log()
  由于a.js文件的wall.log()少写了分号，跟b.js文件合并后，js就会认为‘wall.log()(...)’是需要这么执行的，结果代码就报错了。
 ```
 
-<h2 id="Execution context">执行上下文</h2>  
+<h2 id="context">执行上下文</h2>  
 js在***执行***代码段（全局代码， 函数体， eval）的时候，会做一些准备工作
 
 * 创建arguments对象、检查function函数声明创建、检查var变量声明创建属性
@@ -420,7 +420,8 @@ js在***执行***代码段（全局代码， 函数体， eval）的时候，会
 
 
 
-<h5 id="Variable lifting">关于Hoisting（变量提升）</h5>  
+<h5 id="Variable">关于Hoisting（变量提升）</h5>  
+
 ```
 (function() {
     console.log(typeof foo); // function pointer
@@ -436,6 +437,7 @@ js在***执行***代码段（全局代码， 函数体， eval）的时候，会
 
 
 ```
+
 现在我们可以回答下面这些问题了
 
 
@@ -449,7 +451,7 @@ js在***执行***代码段（全局代码， 函数体， eval）的时候，会
 3. 为什么 bar 是undefined？
 bar实际上是一个变量，并且被赋值了一个函数的引用。我们知道变量是在创建阶段被创建的，但是它们会被初始化为undefined，所以bar是undefined。希望现在你对JavaScript解释器如何执行你的代码能有一个好的理解了。理解execution context and stack会让你知道为什么你的代码有时候会输出和你最初期望不一样的值。
 
-<h2 id="scope chain">作用域链（scope chain）</h2>  
+<h2 id="scopeChain">作用域链（scope chain）</h2>  
 
 先阅读（词法作用域）
 作用域链:是由当前环境与上层环境的一系列变量对象组成，它保证了当前执行环境对符合访问权限的变量和函数的有序访问。是作用域的具体实施表现
@@ -884,7 +886,7 @@ console.log('A' - "B" + 2);
 ```
 
 
-<h2 id="Event loop">事件循环机制</h2>
+<h2 id="Event">事件循环机制</h2>
 >[参考](http://www.jianshu.com/p/12b9f73c5a4f)
 
 * js 有一个大的特点是是单线程，而这个单线程中拥有唯一的一个事件循环
@@ -1169,29 +1171,29 @@ window.addEventListenter('scroll',function() {
 <h2 id="debounceThrottle">定时器的面试题</h2>
 
 ```
-console.log(1);
+  console.log(1);
 
-setTimeout(function() {
-  console.log(2);
-}, 0);
+  setTimeout(function() {
+    console.log(2);
+  }, 0);
 
-$.ajax({
-    url: "../index.php",  //假如上一级目录下有php文件，并且echo '3';
-    data: 'GET',
-    success: function(data) {
-        console.log(data);
-    },      
-})
+  $.ajax({
+      url: "../index.php",  //假如上一级目录下有php文件，并且echo '3';
+      data: 'GET',
+      success: function(data) {
+          console.log(data);
+      },      
+  })
 
-new Promise(function(resolve, reject) {
-    console.log(4);
-    resolve();
-}).then(function() {
-    console.log(5);
-}).then(function() {
-    console.log(6);
-})
-console.log(7);
+  new Promise(function(resolve, reject) {
+      console.log(4);
+      resolve();
+  }).then(function() {
+      console.log(5);
+  }).then(function() {
+      console.log(6);
+  })
+  console.log(7);
 ```
 
 
