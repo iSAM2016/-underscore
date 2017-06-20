@@ -4,6 +4,7 @@
 >参考[JavaScript深入系列15篇](https://juejin.im/post/59278e312f301e006c2e1510)
 >参考[淘金](https://github.com/jawil/blog/issues/4)
 >8张思维导图
+>[前端基础进阶系列](http://www.jianshu.com/p/fe5f173276bd)
 
 ##目录
 *   [undefined](#undefined)
