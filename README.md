@@ -179,6 +179,12 @@ function foo(){var c= d =1};foo(); console.log(c); c is not defined
   console.log(b)
   console.log(a)
 ```
+```
+if (!("a" in window)) {
+    var a = 1;
+}
+alert(a);
+```
 
 <h5 id="scopeType">作用域类型</h5>
 作用域共有两种工作模型
