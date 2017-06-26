@@ -430,6 +430,64 @@ js在***执行***代码段（全局代码， 函数体， eval）的时候，会
 同一个作用域下，不同的调用会产生不同的执行上下文环境，继而产生不同的变量的值。所以，作用域中变量的值是在执行过程中产生的确定的，而作用域却是在函数创建时就确定了。
 所以，如果要查找一个作用域下某个变量的值，就需要找到这个作用域对应的执行上下文环境，再在其中寻找变量的值。
 
+1.找到当前上下文中的调用函数的代码
+2.在执行被调用的函数体中的代码以前，开始创建执行上下文
+3.进入第一个阶段-建立阶段:
+    建立variableObject对象:
+        建立arguments对象，检查当前上下文中的参数，建立该对象下的属性以及属性值
+        检查当前上下文中的函数声明：
+        每找到一个函数声明，就在variableObject下面用函数名建立一个属性，属性值就是指向该函数在内存中的地址的一个引用
+        如果上述函数名已经存在于variableObject下，那么对应的属性值会被新的引用所覆盖。
+        检查当前上下文中的变量声明：
+        每找到一个变量的声明，就在variableObject下，用变量名建立一个属性，属性值为undefined。
+        如果该变量名已经存在于variableObject属性中，直接跳过(防止指向函数的属性的值被变量属性覆盖为undefined)，原属性值不会被修改。
+    初始化作用域链
+    确定上下文中this的指向对象
+4.代码执行阶段:
+    执行函数体中的代码，一行一行地运行代码，给variableObject中的变量属性赋值。
+    下面来看个具体的代码示例:
+    function foo(i) {
+       var a = 'hello';
+       var b = function privateB() {
+    
+       };
+       function c() {
+    
+       }
+    }
+    
+    foo(22);
+    在调用foo(22)的时候，建立阶段如下:
+            fooExecutionContext = {
+       variableObject: {
+           arguments: {
+               0: 22,
+               length: 1
+           },
+           i: 22,
+           c: pointer to function c()
+           a: undefined,
+           b: undefined
+       },
+       scopeChain: { ... },
+       this: { ... }
+    }
+    由此可见，在建立阶段，除了arguments，函数的声明，以及参数被赋予了具体的属性值，其它的变量属性默认的都是undefined。一旦上述建立阶段结束，引擎就会进入代码执行阶段，这个阶段完成后，上述执行上下文对象如下:
+        fooExecutionContext = {
+   variableObject: {
+       arguments: {
+           0: 22,
+           length: 1
+       },
+       i: 22,
+       c: pointer to function c()
+       a: 'hello',
+       b: pointer to function privateB()
+   },
+   scopeChain: { ... },
+   this: { ... }
+}
+我们看到，只有在代码执行阶段，变量属性才会被赋予具体的值。
 
 ```
 function b(x, y, a) {
@@ -453,6 +511,9 @@ b(1, 2, 3);
         return 'hello';
     }
 }());​
+
+在上下文的建立阶段，先是处理arguments, 参数，接着是函数的声明，最后是变量的声明。那么，发现foo函数的声明后，就会在variableObject下面建立一个foo属性，其值是一个指向 函数的引用。当处理变量声明的时候，发现有var foo的声明，但是variableObject已经具有了foo属性，所以直接跳过。当进入代码执行阶段的时候，就可以通过访问到foo属性了，因为它 已经就存在，并且是一个函数引用。
+
 
 function a(x) {
     return x * 2;
