@@ -8,6 +8,8 @@
 
  [前端面试题链接](https://github.com/qiu-deqing/FE-interview)
  [面试题目](https://github.com/chenjinxinlove/javascriptInterview)
+ [牛客网](https://zhuanlan.zhihu.com/p/28911400?utm_source=wechat_session&utm_medium=social)
+ 
 ##目录
 *   [undefined](#undefined)
 *   [原型](#prototype)
