@@ -5,6 +5,14 @@
 >参考[淘金](https://github.com/jawil/blog/issues/4)
 >8张思维导图
 
+
+
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
+
 ##目录
 *   [undefined](#undefined)
 *   [原型](#prototype)
@@ -19,7 +27,7 @@
 *   [闭包](#closure)
 *   [this](#this)
 *   [类型转换](#conversion)
-*   [事件循环机制](#Event)>
+*   [事件循环机制](#Event)
     *   [定时器的面试题](#settimeout)
 *   [判断数据](#isElement)
 *   [Array.prototype.slice新发现](#clone)
@@ -93,13 +101,15 @@
       * Instanceof运算符的第一个变量是一个对象，暂时称为A；第二个变量一般是一个函数，暂时称为B。
       * 运算规则：沿着A的__proto__ 这条线来找，同时沿着B 的prototype 这条线来找，如果两条线能同
                 时找到同一个对象，那么就返回true，如果找到终点还没有找到，则返回false
-                  ```
-                  console.log(Object instanceof Function) //true
-                  console.log(Function instanceof Object) //true
-                  console.log(Function instanceof Function) //true
-                  console.log(Object instanceof Object) //true
-                  ```
-    instanceof表示的就是一种继承关系，或者原型链的结构。
+
+```
+  console.log(Object instanceof Function) //true
+  console.log(Function instanceof Object) //true
+  console.log(Function instanceof Function) //true
+  console.log(Object instanceof Object) //true
+```
+
+instanceof表示的就是一种继承关系，或者原型链的结构。
 
  6. 继承
     * javescript中的继承是通过原型链来体现的：
@@ -1230,7 +1240,7 @@ window.addEventListenter('scroll',function() {
 
 
 
-<meta http-equiv="refresh" content="1">
+<!-- <meta http-equiv="refresh" content="1"> -->
 
 
 
