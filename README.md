@@ -189,6 +189,11 @@ function foo(){var c= d =1};foo(); console.log(c); c is not defined
   console.log(b)
   console.log(a)
   
+  解释： 
+  b = 3;
+  var a = b;
+  所以 b 成了全局变量，而 a 是自执行函数的一个局部变量。
+  
 ```
 
 ```
