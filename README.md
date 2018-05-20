@@ -1,20 +1,15 @@
 # underscore 源码学习
 >参考[亚里士朱德的博](http://yalishizhude.github.io/2015/09/22/underscore-source/)
+
 >参考[源码解析](https://yoyoyohamapi.gitbooks.io/undersercore-analysis/content/base/%E7%BB%93%E6%9E%84.html)
+
 >参考[JavaScript深入系列15篇](https://juejin.im/post/59278e312f301e006c2e1510)
+
 >参考[淘金](https://github.com/jawil/blog/issues/4)
+
 >8张思维导图
 
 >[前端基础进阶系列](http://www.jianshu.com/p/fe5f173276bd)
->[前端面试题链接](https://github.com/qiu-deqing/FE-interview)
->[面试题目](https://github.com/chenjinxinlove/javascriptInterview)
->[牛客网](https://zhuanlan.zhihu.com/p/28911400?utm_source=wechat_session&utm_medium=social)
- 
-
-
-
-
-
 
 ##目录
 *   [undefined](#undefined)
