@@ -140,8 +140,6 @@ instanceof表示的就是一种继承关系，或者原型链的结构。
               没有发现_.isFunction(constructor)
       ```
 
-
-由于__proto__是每个对象都有的属性，而js 里面万物皆对象，所以会形成一条__proto__连起来的链条递归访问到__proto__必须是null，当js 引擎查找对象的属性的时候，会先查找对象本身会有该属性，如果不存在，会在原型链上查找，不会查找自身的prototype
 ![原型链](./img/877d6c73f3b810ddd1692fffd06c290b.png)
 ```
 var A = function(){};
