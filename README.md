@@ -77,11 +77,10 @@ undefined表示"缺少值"，就是此处应该有一个值，但是还没有定
 <h2 id="prototype">原型</h2>
 <h5 id="assignment">原型赋值</h5>
 
-* var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
-* Array,Object,Function 本质上都是函数，获取函数原型属性prototype也是为了便于压缩，如果代码中药扩展属性，
-    Object.prototype.xxx = ....
-  > 这种代码是不可压缩，Object prototype 这些名字修改了浏览器不认识，刚知道啊
-  > 一段代码使用两次都应该定义成变量
+* `var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;`
+* `Array,Object,Function` 本质上都是函数，获取函数原型属性prototype也是为了便于压缩，如果代码中药扩展属性，
+   
+注意`Object.prototype.xxx = ....` 这种代码是不可压缩，Object prototype 这些名字修改了浏览器不认识( 一段代码使用两次都应该定义成变量)
 
 
 <h5 id="understanding">Object 在理解</h5>
