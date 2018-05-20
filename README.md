@@ -175,14 +175,22 @@ console.log(a.__proto__.__proto__.__proto__); //null
 ![作用域嵌套](./img/241708372951952.png)
 ```
 function foo(a){console.log(a + b); b= a;}; foo(2)// b is not defined
+```
+```
 function foo(a){console.log(a + b); var b= a;}; foo(2) //NaN
+```
+```
 function foo(){var c= d =1};foo(); console.log(c); c is not defined
+```
+```
  (function() {
   var a=b=3;
   })()
   console.log(b)
   console.log(a)
+  
 ```
+
 ```
 if (!("a" in window)) {
     var a = 1;
