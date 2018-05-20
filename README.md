@@ -148,8 +148,9 @@ console.log(a.__proto__); //Object {}（即构造器function A 的原型对象�
 console.log(a.__proto__.__proto__); //Object {}（即构造器function Object 的原型对象）
 console.log(a.__proto__.__proto__.__proto__); //null
 ```
-   11. 例子
-    ```
+
+9. 例子
+```
     function Personal(){};
     var p = new Personal();
     ①从p 画出 完成的__proto__链
@@ -162,7 +163,7 @@ console.log(a.__proto__.__proto__.__proto__); //null
     分析： Personal.__proto__ 指向的是Function.prototype.函数是没有constructor 属性的，所以会沿着__proto__ 向上一级寻找，是     Function.prototype，他的constructor 是function Function(){}
 
     ④console.log(Personal.prototype)
-    ```
+```
   
 <h2 id="bindroot">作用域</h2>
 
