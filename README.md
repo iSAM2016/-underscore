@@ -38,13 +38,41 @@
 <h2 id="undefined">undefined</h2>
  在js中undefined是不靠谱的，他能被赋值，如果要获取到正宗的undefined使用void 0
  在一些框架中这样使用
-
-```
+ 
+ ```
     (function(window,undefined) {
     // ...
     })(window)
 ```
   将其他没有用的参数赋值给undefined,防止破坏函数内部逻辑
+ 
+ 
+ 注意： 和null 比较
+ 
+ null表示"没有对象"，即该处不应该有值。典型用法是：
+
+（1） 作为函数的参数，表示该函数的参数不是对象。
+
+（2） 作为对象原型链的终点。
+
+```
+Object.getPrototypeOf(Object.prototype)
+// null
+```
+
+undefined表示"缺少值"，就是此处应该有一个值，但是还没有定义。典型用法是：
+
+
+1. 变量被声明了，但没有赋值时，就等于undefined。
+
+2. 调用函数时，应该提供的参数没有提供，该参数等于undefined。
+
+3. 对象没有赋值的属性，该属性的值为undefined。
+
+4. 函数没有返回值时，默认返回undefined。
+
+
+
 
 <h2 id="prototype">原型</h2>
 <h5 id="assignment">原型赋值</h5>
