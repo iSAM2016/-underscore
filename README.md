@@ -848,6 +848,21 @@ var obj = {
 active(obj.getA);
 ```
 
+补充关于箭头函数的this
+
+```
+function a() {
+    return () => {
+        return () => {
+        	console.log(this)
+        }
+    }
+}
+console.log(a()()())
+```
+注意：箭头函数其实是没有 this 的，这个函数中的 this 只取决于他外面的第一个不是箭头函数的函数的 this。在这个例子中，因为调用 a 符合前面代码中的第一个情况，所以 this 是 window。并且 this 一旦绑定了上下文，就不会被任何代码改变。
+
+
 <h2 id="conversion">类型转换</h2>
 
 ```
